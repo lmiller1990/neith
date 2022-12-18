@@ -1,4 +1,8 @@
 {
-  "compilerOptions: {
+  "compilerOptions": {
+    "lib": ["ES2015", "DOM"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true
   }
 }
