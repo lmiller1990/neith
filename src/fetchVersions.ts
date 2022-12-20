@@ -13,9 +13,6 @@ async function fetchJson(url: string) {
 
 async function fetchLatestVersion(mod: string) {
   const json = await fetchJson(`${registry}/${mod}`);
-
-  // console.log(Object.keys(json))
-  // console.log(json);
 }
 
 fetchLatestVersion("@vue/test-utils");
