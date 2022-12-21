@@ -18,13 +18,13 @@ export async function execa(cmd: string) {
 
 export async function resetdb() {
   try {
-    console.log(`Dropping ${TEST_DB}`)
+    console.log(`Dropping ${TEST_DB}`);
     await execa(`dropdb ${TEST_DB}`);
   } catch (e) {
-    console.log('ERROR', e)
+    console.log("ERROR", e);
     //
   }
-  console.log(`Creating ${TEST_DB}`)
+  console.log(`Creating ${TEST_DB}`);
   await execa(`createdb ${TEST_DB}`);
 }
 
@@ -35,18 +35,19 @@ export function createKnex() {
   });
 }
 
-export type KnexClientCallback = (client: ReturnType<typeof knex>) => Promise<void>;
+export type KnexClientCallback = (
+  client: ReturnType<typeof knex>
+) => Promise<void>;
 
 export interface MigrationTest {
-  up: (callback: KnexClientCallback) => any
-  down: (callback: KnexClientCallback) => any
+  up: (callback: KnexClientCallback) => any;
+  down: (callback: KnexClientCallback) => any;
 }
 
 export async function testMigration(
   migration: string,
   migrationTest: (fns: MigrationTest) => void
 ) {
-
   function up(cb: KnexClientCallback) {
     it(`${migration} - up`, async () => {
       // destroy existing db and create new one
@@ -56,11 +57,11 @@ export async function testMigration(
       await execa(`npm run db:migrate ${migration}.js`);
 
       // run test
-      const client = createKnex()
-      await cb(client)
+      const client = createKnex();
+      await cb(client);
 
       // cleanup - close connection
-      await client.destroy()
+      await client.destroy();
     });
   }
 
@@ -74,13 +75,13 @@ export async function testMigration(
       await execa(`npm run db:rollback ${migration}.js`);
 
       // run test
-      const client = createKnex()
-      await cb(client)
+      const client = createKnex();
+      await cb(client);
 
       // cleanup - close connection
-      await client.destroy()
+      await client.destroy();
     });
   }
 
-  migrationTest({ up, down })
+  migrationTest({ up, down });
 }
