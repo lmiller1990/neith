@@ -12,6 +12,7 @@
     "vitest": "^0.26.1"
   },
   "scripts": {
-    "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest"
+    "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest",
+    "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback"
   }
 }

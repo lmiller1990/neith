@@ -1,51 +1,8 @@
-import knex from "knex";
-import { exec } from "node:child_process";
-import { describe, it, beforeEach, expect } from "vitest";
-import knexConfig from "../../knexfile.js";
+import { expect } from "vitest";
+import { testMigration } from "./utils";
 
-const TEST_DB = "notifier_test";
-
-async function execa(cmd: string) {
-  await new Promise<void>((resolve, reject) => {
-    exec(cmd, (err) => {
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
-  });
-}
-
-async function createdb() {
-  try {
-    console.log(`Dropping ${TEST_DB}...`);
-    await execa(`dropdb ${TEST_DB}`);
-    console.log(`Dropped db!`);
-  } catch {
-    //
-  }
-
-  console.log(`Creating ${TEST_DB}...`);
-  await execa(`createdb ${TEST_DB}`);
-  console.log(`Created db!`);
-}
-
-function createKnex() {
-  return knex({
-    ...knexConfig,
-    connection: { ...knexConfig.connection, database: TEST_DB },
-  });
-}
-
-describe("migrations", () => {
-  beforeEach(async () => {
-    await createdb();
-    console.log("done");
-  });
-
-  it("addOrganizationTable", async () => {
-    await execa(`npm run db:migrate`);
-    const client = createKnex();
+testMigration("20221220105733_addOrganizationTable", (verify) => {
+  verify.up(async (client) => {
     await client("organizations").insert({
       name: "test_org",
       email: "test@test.org",
@@ -64,5 +21,13 @@ describe("migrations", () => {
         password: "test_password",
       },
     ]);
+  });
+
+  verify.down(async (client) => {
+    try {
+      await client("organizations").count({ count: "*" });
+    } catch (e) {
+      expect(e.message).toContain('relation "organizations" does not exist');
+    }
   });
 });
