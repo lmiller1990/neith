@@ -32,6 +32,5 @@ testMigration("20221220105733_addOrganizationTable", (verify) => {
     // verify rollback works
   });
 });
-
 ```
 
