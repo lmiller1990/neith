@@ -1,0 +1,28 @@
+erDiagram
+    organization ||--|{ organization_module : has
+    organization {
+      int id
+      string name
+      string password
+      string email
+      notification_frequency daily_or_weekly
+    }
+    
+    organization_module ||--|| module : has
+    organization_module {
+      module_id int
+      organization_id int
+    }
+
+    module ||--|{ module_version : has
+    module {
+      int id
+      string name
+    }
+
+    module_version {
+      int id
+      string name
+      published timestamp
+      module_id int
+    }

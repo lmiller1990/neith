@@ -1,7 +1,9 @@
 {
   "type": "module",
   "dependencies": {
+    "@mermaid-js/mermaid-cli": "^9.2.2",
     "knex": "^2.3.0",
+    "mermaid": "^9.3.0",
     "node-fetch": "^3.3.0",
     "pg": "^8.8.0"
   },
@@ -14,6 +16,8 @@
   },
   "scripts": {
     "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest",
-    "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback"
+    "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
+    "db:test": "POSTGRES_DB=notifier_test vitest --run --threads=false",
+    "db:erd": "mmdc -i docs/DB.mmd -o db_erd.svg"
   }
 }

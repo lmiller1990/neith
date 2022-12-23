@@ -18,13 +18,10 @@ export async function execa(cmd: string) {
 
 export async function resetdb() {
   try {
-    console.log(`Dropping ${TEST_DB}`);
     await execa(`dropdb ${TEST_DB}`);
   } catch (e) {
-    console.log("ERROR", e);
     //
   }
-  console.log(`Creating ${TEST_DB}`);
   await execa(`createdb ${TEST_DB}`);
 }
 
