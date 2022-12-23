@@ -17,3 +17,7 @@ Users can decide which version(s) they are interested in receiving a notificatio
 We maintain a database of dependencies the user is interested in. Let's say the user is interested in `vite`. At some interval (say daily, the user can decide) we poll the npm registry and grab the versions. [The list can be seen here](https://www.npmjs.com/package/vite?activeTab=versions).
 
 If the user wants updates for every `alpha`, and a new one has been published since we last checked (eg, `4.0.0-alpha.7` -> `4.0.0-alpha.8`) we update the database, and notify the user (if they want real time notifications) or add it to their upcoming notification (for batched notifications).
+
+## Design
+
+I am using Figma for design. The low fidelity designs are [publicly viewable](https://www.figma.com/file/dmrXJfBYLahzOrl9lt3y3o/Dependency-Notifier-App?node-id=0%3A1&t=lGyDFDh5qEk4K2fC-1).
