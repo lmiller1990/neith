@@ -18,6 +18,7 @@
     "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest",
     "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
     "db:test": "POSTGRES_DB=notifier_test vitest --run --threads=false",
-    "db:erd": "mmdc -i docs/DB.mmd -o db_erd.svg"
+    "db:erd": "mmdc -i docs/DB.mmd -o db_erd.svg",
+    "db:make": "npx knex migrate:make"
   }
 }
