@@ -1,11 +1,11 @@
 erDiagram
     organization ||--|{ organization_module : has
     organization {
-      int id
-      string name
-      string password
-      string email
-      notification_frequency daily_or_weekly
+      id int 
+      name text 
+      password text 
+      email text 
+      daily_or_weekly notification_frequency 
     }
     
     organization_module ||--|| module : has
@@ -16,13 +16,23 @@ erDiagram
 
     module ||--|{ module_version : has
     module {
-      int id
-      string name
+      id int 
+      name text 
     }
 
     module_version {
-      int id
-      string name
+      id int 
+      text  name
       published timestamp
       module_id int
+    }
+
+    organization ||--|{ job : has
+    job {
+      id int
+      name text
+      description text
+      organization_id int
+      starts_at timestamp
+      schedule daily_or_weekly
     }
