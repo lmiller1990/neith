@@ -11,7 +11,8 @@ export async function up(knex) {
     table.foreign("organization_id").references("id").inTable("organizations");
     table.text("name");
     table.text("description");
-    table.timestamp("starts_at");
+    table.timestamp("starts_at").notNullable();
+    table.timestamp("last_run");
     table.enu("schedule", ["daily", "weekly"], {
       useNative: true,
       enumName: "schedule",

@@ -25,6 +25,7 @@ testMigration("20221224052443_addJobTable", (verify) => {
       {
         "description": "this is a test job",
         "id": 1,
+        "last_run": null,
         "name": "test job",
         "organization_id": 1,
         "schedule": "daily",
