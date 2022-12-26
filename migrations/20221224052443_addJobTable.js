@@ -9,11 +9,11 @@ export async function up(knex) {
     table.increments("id").notNullable();
     table.integer("organization_id").notNullable();
     table.foreign("organization_id").references("id").inTable("organizations");
-    table.text("name");
-    table.text("description");
-    table.timestamp("starts_at").notNullable();
-    table.timestamp("last_run");
-    table.enu("schedule", ["daily", "weekly"], {
+    table.text("job_name");
+    table.text("job_description");
+    table.timestamp("job_starts_at").notNullable();
+    table.timestamp("job_last_run");
+    table.enu("job_schedule", ["daily", "weekly"], {
       useNative: true,
       enumName: "schedule",
     });

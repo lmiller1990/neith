@@ -5,31 +5,31 @@ testMigration("20221224052443_addJobTable", (verify) => {
   verify.up(async (client) => {
     const [{ id: orgId }] = await client("organizations")
       .insert({
-        name: "test_org",
-        email: "test@test.org",
-        password: "test_password",
+        organization_name: "test_org",
+        organization_email: "test@test.org",
+        organization_password: "test_password",
       })
       .returning("id");
 
     await client("jobs").insert({
       organization_id: orgId,
-      name: "test job",
-      description: "this is a test job",
-      starts_at: "2021-01-07T12:30:00.000Z",
-      schedule: "daily",
+      job_name: "test job",
+      job_description: "this is a test job",
+      job_starts_at: "2021-01-07T12:30:00.000Z",
+      job_schedule: "daily",
     });
 
     const result = await client("jobs").first();
 
     expect(result).toMatchInlineSnapshot(`
       {
-        "description": "this is a test job",
         "id": 1,
-        "last_run": null,
-        "name": "test job",
+        "job_description": "this is a test job",
+        "job_last_run": null,
+        "job_name": "test job",
+        "job_schedule": "daily",
+        "job_starts_at": 2021-01-07T12:30:00.000Z,
         "organization_id": 1,
-        "schedule": "daily",
-        "starts_at": 2021-01-07T12:30:00.000Z,
       }
     `);
   });
@@ -44,7 +44,7 @@ testMigration("20221224052443_addJobTable", (verify) => {
     }
 
     try {
-      await client.raw(`select enum_range(null::schedule);`)
+      await client.raw(`select enum_range(null::schedule);`);
     } catch (e) {
       expect(e.message).toContain(`type "schedule" does not exist`);
     }

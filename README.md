@@ -26,11 +26,10 @@ import { testMigration } from "./utils";
 testMigration("20221220105733_addOrganizationTable", (verify) => {
   verify.up(async (client) => {
     // verify update works
-  })
+  });
 
   verify.down(async (client) => {
     // verify rollback works
   });
 });
 ```
-

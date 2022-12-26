@@ -7,9 +7,9 @@
 export async function up(knex) {
   return knex.schema.createTable("organizations", (table) => {
     table.increments("id");
-    table.text("name").notNullable().unique();
-    table.text("email").notNullable().unique();
-    table.text("password").notNullable();
+    table.text("organization_name").notNullable().unique();
+    table.text("organization_email").notNullable().unique();
+    table.text("organization_password").notNullable();
   });
 }
 

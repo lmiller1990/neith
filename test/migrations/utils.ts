@@ -1,20 +1,9 @@
 import knex from "knex";
-import { exec } from "node:child_process";
+import { execa } from "../../scripts/utils";
 import { it } from "vitest";
 import knexConfig from "../../knexfile.js";
 
 const TEST_DB = "notifier_test";
-
-export async function execa(cmd: string) {
-  await new Promise<void>((resolve, reject) => {
-    exec(cmd, (err) => {
-      if (err) {
-        reject(err);
-      }
-      resolve();
-    });
-  });
-}
 
 export async function resetdb() {
   try {
@@ -30,6 +19,10 @@ export function createKnex() {
     ...knexConfig,
     connection: { ...knexConfig.connection, database: TEST_DB },
   });
+}
+
+export async function runAllMigrations() {
+  await execa(`npm run db:migrate`);
 }
 
 export type KnexClientCallback = (

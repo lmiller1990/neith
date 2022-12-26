@@ -5,64 +5,43 @@ testMigration("20221223095059_addModuleTables", (verify) => {
   verify.up(async (client) => {
     const [{ id: orgId }] = await client("organizations")
       .insert({
-        name: "test_org",
-        email: "test@test.org",
-        password: "test_password",
+        organization_name: "test_org",
+        organization_email: "test@test.org",
+        organization_password: "test_password",
       })
       .returning("id");
 
-    const [{ id: modId }] = await client("modules")
+    await client("modules")
       .insert({
-        name: "vite",
+        module_name: "vite",
+        organization_id: orgId,
+        notify_when: "major",
       })
       .returning("id");
-
-    await client("module_versions").insert({
-      version: "4.0.0-alpha.1",
-      module_id: modId,
-      published: "2021-01-07T12:30:00.000Z",
-    });
-
-    await client("organization_modules").insert({
-      module_id: modId,
-      organization_id: orgId,
-    });
 
     const result = await client("organizations")
-      .join(
-        "organization_modules",
-        "organization_modules.organization_id",
-        "=",
-        "organizations.id"
-      )
-      .join("modules", "organization_modules.module_id", "=", "modules.id")
-      .join("module_versions", "modules.id", "=", "module_versions.module_id")
+      .join("modules", "organizations.id", "=", "modules.organization_id")
       .where("organizations.id", orgId);
 
     expect(result).toMatchInlineSnapshot(`
       [
         {
-          "email": "test@test.org",
           "id": 1,
-          "module_id": 1,
-          "name": "vite",
+          "module_name": "vite",
+          "notify_when": "major",
+          "organization_email": "test@test.org",
           "organization_id": 1,
-          "password": "test_password",
-          "published": 2021-01-07T12:30:00.000Z,
-          "version": "4.0.0-alpha.1",
+          "organization_name": "test_org",
+          "organization_password": "test_password",
         },
       ]
     `);
   });
 
   verify.down(async (client) => {
-    expect.assertions(3)
+    expect.assertions(1);
 
-    for (const table of [
-      "organization_modules",
-      "modules",
-      "module_versions",
-    ]) {
+    for (const table of ["modules"]) {
       try {
         await client(table).count({ count: "*" });
       } catch (e) {

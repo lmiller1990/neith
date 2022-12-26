@@ -25,6 +25,10 @@ There are many services that handle jobs. The usual culprits: AWS, Cloudflare, e
 
 These are probably good options as we scale up, but I'd like to explore managing jobs myself at first, for learning purposes and for flexibility.
 
+Solutions:
+
+- https://temporal.io/
+
 ## Source of Truth
 
 Regardless of what library I use, I'd like to have the source of truth be my database. We can persist the description of the jobs there, and easily change the job running library/service later.

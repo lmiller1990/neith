@@ -8,7 +8,7 @@ Tools such as Dependabot and Renovate are good at getting the latest stable vers
 
 Some products, especially developer tools, would benefit from knowing when new alpha, beta and pre-releases are published. That way, those products can run their test suites and update their code to be ready for the stable version as soon as it comes out.
 
-This is the problem we are solving. Users can specify which dependencies they are interested in tracking, and receive a push notification (via email, Slack, or other service) when a new version is available. 
+This is the problem we are solving. Users can specify which dependencies they are interested in tracking, and receive a push notification (via email, Slack, or other service) when a new version is available.
 
 Users can decide which version(s) they are interested in receiving a notification for (release candidate, `next` tag, etc) and how frequently they'd like to be notified. Users can also get a separate notification for each update, or batch notifications (eg, a weekly summary).
 

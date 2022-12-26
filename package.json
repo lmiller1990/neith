@@ -2,10 +2,13 @@
   "type": "module",
   "dependencies": {
     "@mermaid-js/mermaid-cli": "^9.2.2",
+    "@types/luxon": "^3.1.0",
     "knex": "^2.3.0",
+    "luxon": "^3.1.1",
     "mermaid": "^9.3.0",
     "node-fetch": "^3.3.0",
-    "pg": "^8.8.0"
+    "pg": "^8.8.0",
+    "pg-to-ts": "^4.1.0"
   },
   "devDependencies": {
     "@types/pg": "^8.6.5",
@@ -19,6 +22,7 @@
     "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
     "db:test": "POSTGRES_DB=notifier_test vitest --run --threads=false",
     "db:erd": "mmdc -i docs/DB.mmd -o db_erd.svg",
-    "db:make": "npx knex migrate:make"
+    "db:make": "npx knex migrate:make",
+    "lint": "prettier --write ."
   }
 }

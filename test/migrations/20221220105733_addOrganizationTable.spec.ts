@@ -4,21 +4,21 @@ import { testMigration } from "./utils";
 testMigration("20221220105733_addOrganizationTable", (verify) => {
   verify.up(async (client) => {
     await client("organizations").insert({
-      name: "test_org",
-      email: "test@test.org",
-      password: "test_password",
+      organization_name: "test_org",
+      organization_email: "test@test.org",
+      organization_password: "test_password",
     });
 
     const result = await client("organizations").where({
-      name: "test_org",
+      organization_name: "test_org",
     });
 
     expect(result).toEqual([
       {
         id: 1,
-        name: "test_org",
-        email: "test@test.org",
-        password: "test_password",
+        organization_name: "test_org",
+        organization_email: "test@test.org",
+        organization_password: "test_password",
       },
     ]);
   });
