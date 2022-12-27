@@ -1,4 +1,4 @@
-import { ModuleInfo } from "./types";
+import type { ModuleInfo } from "./types";
 import { notify_when, schedule } from "../dbschema.js";
 import { DateTime } from "luxon";
 import semver from "semver";
@@ -85,10 +85,8 @@ export function notify(payload: NotifyPayload): NotifyModuleResult[] {
     );
 
     const notifyWindow = getPrevDateTime(payload.schedule, payload.now);
-    const previousMajor = getLatestMajor(versions, notifyWindow);
-    const currentMajor = getLatestMajor(versions, payload.now);
-
-    // console.log({ previousMajor, currentMajor });
+    const previousMajor = getLatest(versions, notifyWindow);
+    const currentMajor = getLatest(versions, payload.now);
 
     if (
       shouldNotify(mod.notifyWhen, previousMajor.version, currentMajor.version)
@@ -103,89 +101,6 @@ export function notify(payload: NotifyPayload): NotifyModuleResult[] {
 
   return modules;
 }
-
-// export function notify(payload: NotifyPayload): NotifyModuleResult[] {
-//   return payload.modules.reduce<NotifyModuleResult[]>((acc, mod) => {
-//     const notifyWindow = getPrevDateTime(mod, payload.schedule, payload.now);
-
-//     interface PublishedVersion {
-//       published: DateTime;
-//       version: string;
-//     }
-
-//     interface VersionResult {
-//       latest: PublishedVersion;
-//       previous: PublishedVersion;
-//     }
-
-//     const entries = Object.entries(mod.npmInfo.time) as Array<[string, string]>;
-
-//     const init: PublishedVersion = {
-//       version: entries[0][0],
-//       published: DateTime.fromISO(entries[0][1], { zone: "utc" }),
-//     };
-
-//     const mostRecentBeforePeriod = entries.reduce<VersionResult>(
-//       (acc, curr) => {
-//         const currentDt = DateTime.fromISO(curr[1], { zone: "utc" });
-
-//         // we want the most recent version outside the specified notification window.
-//         // is the current datetime outside the notifcation window
-//         // eg if the interval is weekly, we want the latest version
-//         // published **prior** to the last week
-//         const isOutsideNotifyWindow = currentDt < notifyWindow;
-
-//         // check if it is more recent than the previous candidate
-//         const moreRecentThanCurrentCandidate =
-//           currentDt > acc.previous.published;
-
-//         if (isOutsideNotifyWindow && moreRecentThanCurrentCandidate) {
-//           acc.previous = {
-//             published: currentDt,
-//             version: curr[0],
-//           };
-//         }
-
-//         // We also want the most recently published version to notify the user.
-//         if (currentDt >= acc.latest.published) {
-//           acc.latest = {
-//             version: curr[0],
-//             published: currentDt,
-//           };
-//         }
-
-//         return acc;
-//       },
-//       {
-//         latest: init,
-//         previous: init,
-//       }
-//     );
-
-//     if (
-//       mod.notifyWhen === "major" &&
-//       semver.diff(
-//         mostRecentBeforePeriod.previous.version,
-//         mostRecentBeforePeriod.latest.version
-//       ) !== "major"
-//     ) {
-//       return acc
-//     }
-
-//     return acc.concat({
-//       name: mod.npmInfo.name,
-//       previousVersion: {
-//         version: mostRecentBeforePeriod.previous.version,
-//         published: mostRecentBeforePeriod.previous.published.toISO(),
-//       },
-//       currentVersion: {
-//         version: mostRecentBeforePeriod.latest.version,
-//         published: mostRecentBeforePeriod.latest.published.toISO(),
-//       },
-//     });
-//   }, []);
-// }
-
 export interface VersionHistory {
   version: string;
   published: string;
@@ -231,7 +146,7 @@ export function getLatestPrerelease(
   return best;
 }
 
-export function getLatestMajor(
+export function getLatest(
   versions: VersionHistory[],
   cutoff: string
 ): VersionHistory {
@@ -241,7 +156,7 @@ export function getLatestMajor(
   for (const version of versions) {
     if (
       comparator(best, version) &&
-      semver.major(version.version) >= semver.major(best.version)
+      semver.compare(version.version, best.version) === 1
     ) {
       best = version;
     }
@@ -249,14 +164,3 @@ export function getLatestMajor(
 
   return best;
 }
-
-export function notifableVersionChange(
-  v1: string,
-  v2: string,
-  notifyWhen: notify_when
-): boolean {
-  //
-  return false;
-}
-
-// notify(, createKnex("notifier_test"))

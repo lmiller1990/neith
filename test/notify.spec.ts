@@ -3,7 +3,7 @@ import { DateTime } from "luxon";
 import { describe, expect, it, test } from "vitest";
 import {
   Comparator,
-  getLatestMajor,
+  getLatest,
   getLatestPrerelease,
   isoToUtc,
   notify,
@@ -40,7 +40,7 @@ describe("getLatestPrerelease", () => {
   });
 });
 
-describe("getLatestMajor", () => {
+describe("getLatest", () => {
   it("returns latest major before a specified date", () => {
     const versions: VersionHistory[] = [
       {
@@ -59,7 +59,7 @@ describe("getLatestMajor", () => {
 
     const cutoff = "2022-12-18T15:00:00.000Z";
 
-    const actual = getLatestMajor(versions, cutoff);
+    const actual = getLatest(versions, cutoff);
 
     expect(actual).toEqual(versions[1]);
   });
@@ -210,16 +210,15 @@ describe("notify", () => {
     // If the user wants minor notifications but a major occurs
     // we also notify them. When the user opts for "minor" it really
     // means "minor AND above"
-    it.only("returns when major version jump occurs", () => {
+    it("returns when major version jump occurs", () => {
       const payload: NotifyPayload = {
         modules: [
           {
             npmInfo: {
               name: "vite",
               time: {
-                "0.8.0": "2022-12-16T15:00:00.000Z",
                 "0.9.0": "2022-12-24T15:00:00.000Z",
-                "0.10.0": "2022-12-25T15:00:00.000Z",
+                "1.0.0": "2022-12-25T15:00:00.000Z",
               },
             },
             notifyWhen: "minor",
@@ -240,7 +239,7 @@ describe("notify", () => {
             published: "2022-12-24T15:00:00.000Z",
           },
           currentVersion: {
-            version: "0.10.0",
+            version: "1.0.0",
             published: "2022-12-25T15:00:00.000Z",
           },
         },
