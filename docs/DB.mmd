@@ -1,38 +1,27 @@
 erDiagram
-    organization ||--|{ organization_module : has
+    organization ||--|{ module : has
+    organization ||--|| job : has
+
     organization {
       id int 
-      name text 
-      password text 
-      email text 
-      daily_or_weekly notification_frequency 
+      organization_name text 
+      organization_password text 
+      organization_email text 
     }
     
-    organization_module ||--|| module : has
-    organization_module {
-      module_id int
-      organization_id int
-    }
-
-    module ||--|{ module_version : has
     module {
       id int 
-      name text 
+      organization_id int
+      module_name text 
+      notify_when notification_frequency 
     }
 
-    module_version {
-      id int 
-      text  name
-      published timestamp
-      module_id int
-    }
-
-    organization ||--|{ job : has
     job {
       id int
-      name text
-      description text
       organization_id int
-      starts_at timestamp
-      schedule daily_or_weekly
+      job_name        text
+      job_description text
+      job_starts_at   timestamp
+      job_last_run    timestamp
+      job_schedule    schedule
     }
