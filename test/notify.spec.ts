@@ -1,91 +1,250 @@
 import { Knex } from "knex";
-import { beforeEach, describe, expect, it, test } from "vitest";
-import { notify, NotifyPayload } from "../src/notify";
-import { createKnex, resetdb, runAllMigrations } from "./migrations/utils";
+import { DateTime } from "luxon";
+import { describe, expect, it, test } from "vitest";
+import {
+  Comparator,
+  getLatestMajor,
+  getLatestPrerelease,
+  isoToUtc,
+  notify,
+  NotifyPayload,
+  VersionHistory,
+} from "../src/notify";
 
-async function createOrg(client: Knex) {
-  const [{ id }] = await client("organizations")
-    .insert({
-      name: "test_org",
-      email: "test@test.org",
-      password: "test_password",
-    })
-    .returning("id");
+describe("getLatestPrerelease", () => {
+  it("returns latest prerelease before a specified date", () => {
+    const versions: VersionHistory[] = [
+      {
+        version: "1.0.0-alpha.0",
+        published: "2022-12-16T15:00:00.000Z",
+      },
+      {
+        version: "0.9.1",
+        published: "2022-12-17T15:00:00.000Z",
+      },
+      {
+        version: "1.9.1-alpha.2",
+        published: "2022-12-20T15:00:00.000Z",
+      },
+      {
+        version: "1.0.0",
+        published: "2022-12-20T15:00:00.000Z",
+      },
+    ];
 
-  return client("organizations").where({ id }).first();
-}
+    const cutoff = "2022-12-17T18:00:00.000Z";
+
+    const actual = getLatestPrerelease(versions, cutoff);
+
+    expect(actual).toEqual(versions[0]);
+  });
+});
+
+describe("getLatestMajor", () => {
+  it("returns latest major before a specified date", () => {
+    const versions: VersionHistory[] = [
+      {
+        version: "1.0.0",
+        published: "2022-12-16T15:00:00.000Z",
+      },
+      {
+        version: "2.1.5",
+        published: "2022-12-17T15:00:00.000Z",
+      },
+      {
+        version: "3.0.1",
+        published: "2022-12-20T15:00:00.000Z",
+      },
+    ];
+
+    const cutoff = "2022-12-18T15:00:00.000Z";
+
+    const actual = getLatestMajor(versions, cutoff);
+
+    expect(actual).toEqual(versions[1]);
+  });
+});
 
 describe("notify", () => {
-  test("weekly notification for major release", async () => {
-    const payload: NotifyPayload = {
-      modules: [
-        {
-          npmInfo: {
+  describe("major release", () => {
+    describe("weekly notification", () => {
+      it("returns module with major release jump", () => {
+        const payload: NotifyPayload = {
+          modules: [
+            {
+              npmInfo: {
+                name: "vite",
+                time: {
+                  "0.9.0": "2022-12-16T15:00:00.000Z",
+                  "1.0.0": "2022-12-25T15:00:00.000Z",
+                },
+              },
+              notifyWhen: "major",
+            },
+          ],
+          jobLastRun: null,
+          now: "2022-12-27T15:00:00.000Z",
+          schedule: "weekly",
+        };
+
+        const result = notify(payload);
+
+        expect(result).toEqual([
+          {
             name: "vite",
-            time: {
-              "0.9.0": "2022-12-16T15:00:00.000Z",
-              "1.0.0": "2022-12-27T15:00:00.000Z",
+            previousVersion: {
+              version: "0.9.0",
+              published: "2022-12-16T15:00:00.000Z",
+            },
+            currentVersion: {
+              version: "1.0.0",
+              published: "2022-12-25T15:00:00.000Z",
             },
           },
-          notifyWhen: "major",
-        },
-      ],
-      jobLastRun: null,
-      now: "2022-12-25T15:00:00.000Z",
-      schedule: "weekly",
-    };
+        ]);
+      });
 
-    const result = notify(payload);
+      it("returns nothing if no suitable change is found", () => {
+        const payload: NotifyPayload = {
+          modules: [
+            {
+              npmInfo: {
+                name: "vite",
+                time: {
+                  "0.9.0": "2022-12-16T15:00:00.000Z",
+                  "0.10.0": "2022-12-25T15:00:00.000Z",
+                },
+              },
+              notifyWhen: "major",
+            },
+          ],
+          jobLastRun: null,
+          now: "2022-12-27T15:00:00.000Z",
+          schedule: "weekly",
+        };
 
-    expect(result).toEqual([
-      {
-        name: "vite",
-        previousVersion: {
-          version: "0.9.0",
-          published: "2022-12-16T15:00:00.000Z",
-        },
-        currentVersion: {
-          version: "1.0.0",
-          published: "2022-12-27T15:00:00.000Z",
-        },
-      },
-    ]);
+        const result = notify(payload);
+
+        expect(result).toEqual([]);
+      });
+    });
+
+    describe("daily notification", () => {
+      it("returns module with major release jump", () => {
+        const payload: NotifyPayload = {
+          modules: [
+            {
+              npmInfo: {
+                name: "vite",
+                time: {
+                  "0.8.0": "2022-12-16T15:00:00.000Z",
+                  "0.9.0": "2022-12-24T15:00:00.000Z",
+                  "1.0.0": "2022-12-25T15:00:00.000Z",
+                },
+              },
+              notifyWhen: "major",
+            },
+          ],
+          jobLastRun: null,
+          now: "2022-12-26T15:00:00.000Z",
+          schedule: "daily",
+        };
+
+        const result = notify(payload);
+
+        expect(result).toEqual([
+          {
+            name: "vite",
+            previousVersion: {
+              version: "0.9.0",
+              published: "2022-12-24T15:00:00.000Z",
+            },
+            currentVersion: {
+              version: "1.0.0",
+              published: "2022-12-25T15:00:00.000Z",
+            },
+          },
+        ]);
+      });
+    });
   });
 
-  test("daily notification for major release", async () => {
-    const payload: NotifyPayload = {
-      modules: [
-        {
-          npmInfo: {
-            name: "vite",
-            time: {
-              "0.8.0": "2022-12-16T15:00:00.000Z",
-              "0.9.0": "2022-12-24T15:00:00.000Z",
-              "1.0.0": "2022-12-25T15:00:00.000Z",
+  describe("minor release", () => {
+    it("returns when minor version jump occurs", () => {
+      const payload: NotifyPayload = {
+        modules: [
+          {
+            npmInfo: {
+              name: "vite",
+              time: {
+                "0.8.0": "2022-12-16T15:00:00.000Z",
+                "0.9.0": "2022-12-24T15:00:00.000Z",
+                "0.10.0": "2022-12-25T15:00:00.000Z",
+              },
             },
+            notifyWhen: "minor",
           },
-          notifyWhen: "major",
-        },
-      ],
-      jobLastRun: null,
-      now: "2022-12-26T15:00:00.000Z",
-      schedule: "daily",
-    };
+        ],
+        jobLastRun: null,
+        now: "2022-12-26T15:00:00.000Z",
+        schedule: "daily",
+      };
 
-    const result = notify(payload);
+      const result = notify(payload);
 
-    expect(result).toEqual([
-      {
-        name: "vite",
-        previousVersion: {
-          version: "0.9.0",
-          published: "2022-12-24T15:00:00.000Z",
+      expect(result).toEqual([
+        {
+          name: "vite",
+          previousVersion: {
+            version: "0.9.0",
+            published: "2022-12-24T15:00:00.000Z",
+          },
+          currentVersion: {
+            version: "0.10.0",
+            published: "2022-12-25T15:00:00.000Z",
+          },
         },
-        currentVersion: {
-          version: "1.0.0",
-          published: "2022-12-25T15:00:00.000Z",
+      ]);
+    });
+
+    // If the user wants minor notifications but a major occurs
+    // we also notify them. When the user opts for "minor" it really
+    // means "minor AND above"
+    it.only("returns when major version jump occurs", () => {
+      const payload: NotifyPayload = {
+        modules: [
+          {
+            npmInfo: {
+              name: "vite",
+              time: {
+                "0.8.0": "2022-12-16T15:00:00.000Z",
+                "0.9.0": "2022-12-24T15:00:00.000Z",
+                "0.10.0": "2022-12-25T15:00:00.000Z",
+              },
+            },
+            notifyWhen: "minor",
+          },
+        ],
+        jobLastRun: null,
+        now: "2022-12-26T15:00:00.000Z",
+        schedule: "daily",
+      };
+
+      const result = notify(payload);
+
+      expect(result).toEqual([
+        {
+          name: "vite",
+          previousVersion: {
+            version: "0.9.0",
+            published: "2022-12-24T15:00:00.000Z",
+          },
+          currentVersion: {
+            version: "0.10.0",
+            published: "2022-12-25T15:00:00.000Z",
+          },
         },
-      },
-    ]);
+      ]);
+    });
   });
 });

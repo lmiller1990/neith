@@ -10,7 +10,7 @@ export async function up(knex) {
     table.integer("organization_id").notNullable();
     table.foreign("organization_id").references("id").inTable("organizations");
     table.text("module_name").notNullable().unique();
-    table.enu("notify_when", ["major", "minor", "pre-release"], {
+    table.enu("notify_when", ["major", "minor", "prerelease"], {
       useNative: true,
       enumName: "notify_when",
     });
