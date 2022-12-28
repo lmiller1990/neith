@@ -2,15 +2,24 @@
   "type": "module",
   "dependencies": {
     "@mermaid-js/mermaid-cli": "^9.2.2",
+    "@trpc/client": "10.7.0",
+    "@trpc/server": "10.7.0",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.15",
     "@types/luxon": "^3.1.0",
     "@types/semver": "^7.3.13",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "knex": "^2.3.0",
     "luxon": "^3.1.1",
     "mermaid": "^9.3.0",
     "node-fetch": "^3.3.0",
     "pg": "^8.8.0",
     "pg-to-ts": "^4.1.0",
-    "semver": "^7.3.8"
+    "semver": "^7.3.8",
+    "vite": "^4.0.3",
+    "vue": "^3.2.45"
   },
   "devDependencies": {
     "@types/pg": "^8.6.5",
@@ -20,6 +29,8 @@
     "vitest": "^0.26.1"
   },
   "scripts": {
+    "vite:dev": "vite src/frontend",
+    "server": "node --loader ts-node/esm src/server/express.ts",
     "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest",
     "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
     "db:test": "POSTGRES_DB=notifier_test vitest --run --threads=false",
