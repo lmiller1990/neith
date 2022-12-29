@@ -12,24 +12,35 @@ export async function sessionMiddleware(
 
   if (!sessionId) {
     const id = randomUUID();
-    await req.db("sessions").insert({ id: id });
+    await req.db("sessions").insert({ id });
+
     req.session = { id };
     res.cookie(COOKIE, id);
 
     return next();
   }
 
-  const session = await req.db("sessions")
+  const session = await req
+    .db("sessions")
     .where("id", sessionId)
-    .first();
+    .first()
+    .returning<{ id: string; organization_id: string }>([
+      "id",
+      "organization_id",
+    ]);
 
   if (sessionId && session) {
-    req.session = { id: sessionId };
+    req.session = {
+      id: session.id,
+      organizationId: session.organization_id,
+    };
     return next();
   }
 
-  const id = randomUUID();
-  await req.db("sessions").insert({ id });
+  const [{ id }] = await req
+    .db("sessions")
+    .insert({ id: randomUUID() })
+    .returning("id");
   req.session = { id };
   res.cookie(COOKIE, id);
 

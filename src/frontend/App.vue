@@ -12,4 +12,4 @@ async function fetchUser () {
 fetchUser()
 </script>
 
-<template>OK: {{  user  }}</template>
+<template>ok: {{  user  }}</template>

@@ -3,3 +3,9 @@ export class OrganizationExistsError extends Error {
     super(`Organization with email ${email} already exists.`);
   }
 }
+
+export class InvalidCredentialsError extends Error {
+  constructor() {
+    super(`Email or password is incorrect.`);
+  }
+}

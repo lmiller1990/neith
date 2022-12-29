@@ -13,6 +13,7 @@
     "body-parser": "^1.20.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "cypress": "^12.2.0",
     "debug": "^4.3.4",
     "express": "^4.18.2",
     "knex": "^2.3.0",
@@ -39,7 +40,7 @@
   },
   "scripts": {
     "vite:dev": "vite src/frontend",
-    "server": "POSTGRES_DB=notifier_test node --loader ts-node/esm ./src/server/express.ts",
+    "server": "NODE_ENV=development POSTGRES_DB=notifier_test node --loader ts-node/esm ./src/server/express.ts",
     "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest",
     "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
     "db:test": "POSTGRES_DB=notifier_test vitest --run --threads=false",

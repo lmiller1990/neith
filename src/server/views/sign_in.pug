@@ -2,10 +2,13 @@ extends layout.pug
 
 block content
   form(method="POST" action="/sign_in")
-  label(for="email") Email
-  input#email
+    label(for="email") Email
+    input#email(name="email" type="email")
 
-  label(for="password") Password
-  input#password
+    label(for="password") Password
+    input#password(name="password" type="password")
 
-  button#submit Submit
+    button#submit Submit
+
+  if flash
+    include includes/flash.pug
