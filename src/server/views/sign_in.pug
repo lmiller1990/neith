@@ -1,0 +1,11 @@
+extends layout.pug
+
+block content
+  form(method="POST" action="/sign_in")
+  label(for="email") Email
+  input#email
+
+  label(for="password") Password
+  input#password
+
+  button#submit Submit

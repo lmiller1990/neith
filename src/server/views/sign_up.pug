@@ -1,0 +1,14 @@
+extends layout.pug
+
+block content
+  form(method="POST" action="/sign_up")
+    label(for="email") Email
+    input#email(name="email" type="email")
+
+    label(for="organization") Organization Name
+    input#organization(name="organization")
+
+    label(for="password") Password
+    input#password(name="password" type="password")
+
+    button#submit Submit
