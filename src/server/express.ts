@@ -14,6 +14,9 @@ import { sessionMiddleware } from "./session.js";
 import { contextMiddleware } from "./context.js";
 import { html } from "./controllers/html.js";
 import { auth } from "./controllers/auth.js";
+import debugLib from 'debug'
+
+const debug = debugLib('server:express')
 
 declare global {
   namespace Express {

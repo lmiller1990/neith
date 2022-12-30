@@ -3,7 +3,7 @@ import { User } from "../models/user.js";
 import debugLib from "debug";
 import { Session } from "../models/session.js";
 
-const debug = debugLib("server:controllers:auth");
+const debug = debugLib("notifier:server:controllers:auth");
 
 export const auth = Router();
 
