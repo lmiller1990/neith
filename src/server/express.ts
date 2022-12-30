@@ -52,8 +52,8 @@ app.use(html);
 app.use(auth);
 
 app.get("/app/*", (_req, res) => {
-  res.redirect("/app")
-})
+  res.redirect("/app");
+});
 
 app.use(
   "/trpc",

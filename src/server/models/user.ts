@@ -11,21 +11,17 @@ export class User {
     return bcrypt.hash(plaintext, saltRounds);
   }
 
-  static async signIn(
-    db: Knex,
-    email: string,
-    plaintext: string
-  ) {
+  static async signIn(db: Knex, email: string, plaintext: string) {
     const org = await db("organizations")
       .where({ organization_email: email })
-      .first()
+      .first();
 
     if (!org) {
-      debug('no organzation with email %s', email)
+      debug("no organzation with email %s", email);
       throw new InvalidCredentialsError();
     }
 
-    console.log(plaintext, org)
+    console.log(plaintext, org);
 
     const hash = await bcrypt.compare(plaintext, org.organization_password);
 
@@ -33,7 +29,7 @@ export class User {
       throw new InvalidCredentialsError();
     }
 
-    return org.id
+    return org.id;
   }
 
   static async signUp(
@@ -59,9 +55,9 @@ export class User {
         organization_password: hash,
       })
       .returning("id");
-    
+
     debug("created organization with id %s", id);
 
-    return id
+    return id;
   }
 }

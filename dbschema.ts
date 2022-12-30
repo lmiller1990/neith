@@ -1,7 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT!
  *
@@ -10,10 +9,9 @@
  *
  */
 
-
 export type Json = unknown;
-export type notify_when = 'major' | 'minor' | 'prerelease';
-export type schedule = 'daily' | 'weekly';
+export type notify_when = "major" | "minor" | "prerelease";
+export type schedule = "daily" | "weekly";
 
 // Table jobs
 export interface Jobs {
@@ -35,13 +33,27 @@ export interface JobsInput {
   job_schedule?: schedule | null;
 }
 const jobs = {
-  tableName: 'jobs',
-  columns: ['id', 'organization_id', 'job_name', 'job_description', 'job_starts_at', 'job_last_run', 'job_schedule'],
-  requiredForInsert: ['organization_id', 'job_starts_at'],
-  primaryKey: 'id',
-  foreignKeys: { organization_id: { table: 'organizations', column: 'id', $type: null as unknown as Organizations }, },
+  tableName: "jobs",
+  columns: [
+    "id",
+    "organization_id",
+    "job_name",
+    "job_description",
+    "job_starts_at",
+    "job_last_run",
+    "job_schedule",
+  ],
+  requiredForInsert: ["organization_id", "job_starts_at"],
+  primaryKey: "id",
+  foreignKeys: {
+    organization_id: {
+      table: "organizations",
+      column: "id",
+      $type: null as unknown as Organizations,
+    },
+  },
   $type: null as unknown as Jobs,
-  $input: null as unknown as JobsInput
+  $input: null as unknown as JobsInput,
 } as const;
 
 // Table knex_migrations
@@ -58,13 +70,13 @@ export interface KnexMigrationsInput {
   migration_time?: Date | null;
 }
 const knex_migrations = {
-  tableName: 'knex_migrations',
-  columns: ['id', 'name', 'batch', 'migration_time'],
+  tableName: "knex_migrations",
+  columns: ["id", "name", "batch", "migration_time"],
   requiredForInsert: [],
-  primaryKey: 'id',
+  primaryKey: "id",
   foreignKeys: {},
   $type: null as unknown as KnexMigrations,
-  $input: null as unknown as KnexMigrationsInput
+  $input: null as unknown as KnexMigrationsInput,
 } as const;
 
 // Table knex_migrations_lock
@@ -77,13 +89,13 @@ export interface KnexMigrationsLockInput {
   is_locked?: number | null;
 }
 const knex_migrations_lock = {
-  tableName: 'knex_migrations_lock',
-  columns: ['index', 'is_locked'],
+  tableName: "knex_migrations_lock",
+  columns: ["index", "is_locked"],
   requiredForInsert: [],
-  primaryKey: 'index',
+  primaryKey: "index",
   foreignKeys: {},
   $type: null as unknown as KnexMigrationsLock,
-  $input: null as unknown as KnexMigrationsLockInput
+  $input: null as unknown as KnexMigrationsLockInput,
 } as const;
 
 // Table modules
@@ -100,13 +112,19 @@ export interface ModulesInput {
   notify_when?: notify_when | null;
 }
 const modules = {
-  tableName: 'modules',
-  columns: ['id', 'organization_id', 'module_name', 'notify_when'],
-  requiredForInsert: ['organization_id', 'module_name'],
-  primaryKey: 'id',
-  foreignKeys: { organization_id: { table: 'organizations', column: 'id', $type: null as unknown as Organizations }, },
+  tableName: "modules",
+  columns: ["id", "organization_id", "module_name", "notify_when"],
+  requiredForInsert: ["organization_id", "module_name"],
+  primaryKey: "id",
+  foreignKeys: {
+    organization_id: {
+      table: "organizations",
+      column: "id",
+      $type: null as unknown as Organizations,
+    },
+  },
   $type: null as unknown as Modules,
-  $input: null as unknown as ModulesInput
+  $input: null as unknown as ModulesInput,
 } as const;
 
 // Table organizations
@@ -123,15 +141,23 @@ export interface OrganizationsInput {
   organization_password: string;
 }
 const organizations = {
-  tableName: 'organizations',
-  columns: ['id', 'organization_name', 'organization_email', 'organization_password'],
-  requiredForInsert: ['organization_name', 'organization_email', 'organization_password'],
-  primaryKey: 'id',
+  tableName: "organizations",
+  columns: [
+    "id",
+    "organization_name",
+    "organization_email",
+    "organization_password",
+  ],
+  requiredForInsert: [
+    "organization_name",
+    "organization_email",
+    "organization_password",
+  ],
+  primaryKey: "id",
   foreignKeys: {},
   $type: null as unknown as Organizations,
-  $input: null as unknown as OrganizationsInput
+  $input: null as unknown as OrganizationsInput,
 } as const;
-
 
 export interface TableTypes {
   jobs: {
@@ -162,4 +188,4 @@ export const tables = {
   knex_migrations_lock,
   modules,
   organizations,
-}
+};

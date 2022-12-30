@@ -12,6 +12,6 @@ html.get("/app", requiresAuth, (_req, res) => {
   if (process.env.NODE_ENV === "development") {
     res.send(Html.appDev).end();
   } else {
-    throw new Error('TODO!')
+    throw new Error("TODO!");
   }
 });

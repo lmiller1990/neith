@@ -1,6 +1,3 @@
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
-<template>
-  Deps page
-</template>
+<template>Deps page</template>

@@ -9,12 +9,14 @@ import { knexClient } from "../express";
 //   };
 // };
 
-export const createContext = ({
+export const createContext = ({ req, res }: CreateExpressContextOptions) => ({
   req,
   res,
-}: CreateExpressContextOptions) => ({ req, res });
+});
 
-const t = initTRPC.context<inferAsyncReturnType<typeof createContext>>().create();
+const t = initTRPC
+  .context<inferAsyncReturnType<typeof createContext>>()
+  .create();
 
 export const trpc = t.router({
   getUser: t.procedure.query((req) => {

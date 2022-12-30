@@ -6,11 +6,11 @@ import debugLib from "debug";
 const debug = debugLib("notifier:scripts:utils");
 
 export async function execa(cmd: string) {
-  debug('running cmd %s', cmd)
+  debug("running cmd %s", cmd);
   return new Promise<string>((resolve, reject) => {
     exec(cmd, (err, stdout) => {
       if (err) {
-        debug('error running %s: %s', cmd, err.message)
+        debug("error running %s: %s", cmd, err.message);
         reject(err);
       }
       resolve(stdout);

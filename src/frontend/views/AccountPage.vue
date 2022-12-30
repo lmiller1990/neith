@@ -1,6 +1,3 @@
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
-<template>
-  Account page
-</template>
+<template>Account page</template>

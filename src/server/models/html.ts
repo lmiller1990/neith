@@ -19,7 +19,7 @@ export class Html {
 
       </html>
     `;
-  
-    return html
+
+    return html;
   }
 }
