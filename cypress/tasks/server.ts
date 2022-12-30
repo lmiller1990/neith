@@ -73,6 +73,7 @@ export async function startServer(): Promise<null> {
   debug("waiting for port %s", PORT);
   const { open } = await waitPort({
     host: "localhost",
+    output: 'silent',
     port: PORT,
   });
 

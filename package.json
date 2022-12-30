@@ -49,6 +49,7 @@
     "db:types": "POSTGRES_DB=notifier_test node --loader ts-node/esm  scripts/dbToTs.ts",
     "db:erd": "mmdc -i docs/DB.mmd -o db_erd.svg",
     "db:make": "npx knex migrate:make",
+    "test:e2e": "cypress run --e2e",
     "lint": "prettier --write ."
   }
 }
