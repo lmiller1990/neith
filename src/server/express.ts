@@ -1,30 +1,30 @@
 import express from "express";
 import { initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import path from 'path'
+import path from "path";
 import { PORT } from "../shared/constants.js";
-import url from 'node:url';
+import url from "node:url";
 import knex from "knex";
-import type { Knex } from 'knex'
-import cookieParser from 'cookie-parser'
-import bodyParser from 'body-parser'
-import cors from "cors";
+import type { Knex } from "knex";
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 import knexConfig from "../../knexfile.js";
 import { sessionMiddleware } from "./session.js";
 import { contextMiddleware } from "./context.js";
 import { html } from "./controllers/html.js";
 import { auth } from "./controllers/auth.js";
-import debugLib from 'debug'
+import debugLib from "debug";
+import { requiresAuth } from "./middleware/requiresAuth.js";
 
-const debug = debugLib('server:express')
+const debug = debugLib("server:express");
 
 declare global {
   namespace Express {
     interface Request {
-      db: Knex
+      db: Knex;
       session: {
         id: string;
-        organizationId?: string
+        organizationId?: string;
       };
     }
   }
@@ -33,13 +33,14 @@ declare global {
 export const knexClient = knex(knexConfig);
 
 const app = express();
-app.use(cors());
-app.use(cookieParser())
-app.use(bodyParser.urlencoded({
-  extended: true
-}))
-app.use(contextMiddleware)
-app.use(sessionMiddleware)
+app.use(cookieParser());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(contextMiddleware);
+app.use(sessionMiddleware);
 
 const t = initTRPC.context().create();
 
@@ -52,16 +53,17 @@ export const appRouter = t.router({
 // export type definition of API
 export type AppRouter = typeof appRouter;
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
-app.set('view engine', 'pug')
-app.set('views', path.join(__dirname, 'views'))
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
-app.use(html)
-app.use(auth)
+app.use(html);
+app.use(auth);
 
 app.use(
   "/trpc",
+  requiresAuth,
   trpcExpress.createExpressMiddleware({
     router: appRouter,
   })
