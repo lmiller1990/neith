@@ -2,6 +2,7 @@
 import { watchDebounced } from "@vueuse/core";
 import { ref } from "vue";
 import { notifyWhen } from "../../shared/constants.js";
+import Button from "../components/Button.vue";
 import PkgInfo from "../components/PkgInfo.vue";
 import { trpc } from "../trpc";
 
@@ -15,10 +16,17 @@ async function fetchPackageData(search: string) {
 }
 
 watchDebounced(pkgName, fetchPackageData, { debounce: 1000, immediate: true });
+
+function handleSubmit() {
+  trpc.savePackage.mutate({
+    name: pkgName.value,
+    frequency: frequency.value,
+  });
+}
 </script>
 
 <template>
-  <form>
+  <form @submit.prevent="handleSubmit">
     <label for="pkgName">Package Name</label>
     <input name="pkgName" id="pkgName" v-model="pkgName" />
     <select v-model="frequency">
@@ -26,6 +34,7 @@ watchDebounced(pkgName, fetchPackageData, { debounce: 1000, immediate: true });
         {{ freq }}
       </option>
     </select>
+    <Button>Submit</Button>
   </form>
 
   <PkgInfo v-if="pkg" :pkg="pkg" />

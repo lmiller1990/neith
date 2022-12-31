@@ -35,6 +35,7 @@ export const knexClient = knex(knexConfig);
 
 const app = express();
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
     extended: true,

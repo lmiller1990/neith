@@ -1,5 +1,5 @@
 import knex from "knex";
-import { createKnex, execa, resetdb } from "../../scripts/utils";
+import { createKnex, execa, resetdb } from "../../scripts/utils.js";
 import { it } from "vitest";
 
 export type KnexClientCallback = (

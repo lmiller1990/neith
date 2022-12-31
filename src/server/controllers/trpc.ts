@@ -1,5 +1,6 @@
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
+import { notify_when } from "../../../dbschema.js";
 import { Registry } from "../models/registry.js";
 
 // export const createContext = async (opts) => {
@@ -29,6 +30,12 @@ export const trpc = t.router({
     })
     .query((req) => {
       return Registry.fetchPackage(req.input);
+    }),
+
+  savePackage: t.procedure
+    .input((pkg: { name: string; frequency: notify_when }) => pkg)
+    .mutation((req) => {
+      console.log(`Time to say ${req.input}`);
     }),
 });
 
