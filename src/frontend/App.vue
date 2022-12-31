@@ -30,4 +30,5 @@ const items: MenuLink[] = [
 
 <template>
   <SideMenu :items="items" selected="dependencies" />
+  <RouterView />
 </template>

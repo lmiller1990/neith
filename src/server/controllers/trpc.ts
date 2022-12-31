@@ -1,6 +1,6 @@
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
-import { knexClient } from "../express";
+import { Registry } from "../models/registry.js";
 
 // export const createContext = async (opts) => {
 
@@ -23,10 +23,13 @@ export const trpc = t.router({
     return { id: req.input, name: "Bilbo" };
   }),
 
-  getDependencies: t.procedure.query((req) => {
-    console.log(req.ctx.req.db);
-    return [];
-  }),
+  getDependencies: t.procedure
+    .input((pkgName: string) => {
+      return pkgName;
+    })
+    .query((req) => {
+      return Registry.fetchPackage(req.input);
+    }),
 });
 
 // export type definition of API
