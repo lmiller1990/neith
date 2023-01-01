@@ -19,10 +19,7 @@ export const Registry = {
         tag,
         published: result.time[tag],
       }))
-      .map((x) => {
-        console.log(x);
-        return x;
-      })
+      .map((x) => x)
       .sort((x, y) => (isoToUtc(x.published) < isoToUtc(y.published) ? 1 : -1));
 
     return {

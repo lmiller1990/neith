@@ -1,6 +1,8 @@
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
+import assert from "node:assert";
 import { notify_when } from "../../../dbschema.js";
+import { Package } from "../models/package.js";
 import { Registry } from "../models/registry.js";
 
 // export const createContext = async (opts) => {
@@ -25,17 +27,27 @@ export const trpc = t.router({
   }),
 
   getDependencies: t.procedure
-    .input((pkgName: string) => {
-      return pkgName;
+    .input((pkgName) => {
+      return pkgName as string;
     })
     .query((req) => {
       return Registry.fetchPackage(req.input);
     }),
 
   savePackage: t.procedure
-    .input((pkg: { name: string; frequency: notify_when }) => pkg)
+    .input((pkg) => {
+      return pkg as { name: string; frequency: notify_when };
+    })
     .mutation((req) => {
-      console.log(`Time to say ${req.input}`);
+      assert(
+        req.ctx.req.session.organizationId,
+        `organizationId should be defined`
+      );
+      return Package.saveModuleForOrganization(req.ctx.req.db, {
+        name: req.input.name,
+        notify: req.input.frequency,
+        organizationId: parseInt(req.ctx.req.session.organizationId, 10),
+      });
     }),
 });
 
