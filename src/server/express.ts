@@ -25,7 +25,7 @@ declare global {
       db: Knex;
       session: {
         id: string;
-        organizationId?: string;
+        organizationId?: number;
       };
     }
   }

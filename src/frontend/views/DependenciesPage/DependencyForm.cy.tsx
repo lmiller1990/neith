@@ -31,9 +31,9 @@ describe("<DependencyForm />", () => {
       ],
     });
 
-    // @ts-ignore - dunno, figure it out
     cy.mount(() => (
       <div class="m-4">
+        {/* @ts-ignore - dunno, figure it out */}
         <DependencyForm pkg={trpcResponse} />
       </div>
     ));

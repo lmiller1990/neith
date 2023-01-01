@@ -3,7 +3,7 @@ import type { CreateExpressContextOptions } from "@trpc/server/adapters/express"
 import assert from "node:assert";
 import { notify_when } from "../../../dbschema.js";
 import { Package } from "../models/package.js";
-import { Registry } from "../models/registry.js";
+import { NpmPkg, Registry } from "../models/registry.js";
 
 // export const createContext = async (opts) => {
 
@@ -26,6 +26,16 @@ export const trpc = t.router({
     return { id: req.input, name: "Bilbo" };
   }),
 
+  getOrganizationModules: t.procedure.query(async (req) => {
+    const pkgs = await Package.getModulesForOrganization(req.ctx.req.db, {
+      organizationId: req.ctx.req.session.organizationId!,
+    });
+
+    return Promise.all(
+      pkgs.map((pkg) => Registry.fetchPackage(pkg.module_name))
+    );
+  }),
+
   getDependencies: t.procedure
     .input((pkgName) => {
       return pkgName as string;
@@ -46,7 +56,7 @@ export const trpc = t.router({
       return Package.saveModuleForOrganization(req.ctx.req.db, {
         name: req.input.name,
         notify: req.input.frequency,
-        organizationId: parseInt(req.ctx.req.session.organizationId, 10),
+        organizationId: req.ctx.req.session.organizationId!,
       });
     }),
 });

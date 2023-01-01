@@ -1,16 +1,6 @@
 <script lang="ts" setup>
-import { ref } from "vue";
 import SideMenu, { MenuLink } from "./components/SideMenu.vue";
-import { trpc } from "./trpc";
-
-let user = ref();
-
-async function fetchUser() {
-  const u = await trpc.getDependencies.query();
-  user.value = u;
-}
-
-fetchUser();
+import { useModal } from "./composables/modal.js";
 
 const items: MenuLink[] = [
   {
@@ -26,9 +16,40 @@ const items: MenuLink[] = [
     name: "account",
   },
 ];
+
+const modal = useModal();
+console.log(modal.show.value);
+
+function handleHideModal(event: Event) {
+  if ((event.target as HTMLDivElement).id !== "modal") {
+    return;
+  }
+  modal.hideModal();
+}
 </script>
 
 <template>
-  <SideMenu :items="items" selected="dependencies" />
-  <RouterView />
+  <div
+    v-show="modal.show.value"
+    id="modal"
+    class="absolute w-screen h-screen z-10 flex justify-center flex-col items-center bg-gray-400/50"
+    @click="handleHideModal"
+  >
+    <component
+      :is="modal.component.value"
+      class="pt-8 px-8 pb-4 rounded bg-white shadow-xl"
+    />
+  </div>
+
+  <div class="flex items-center flex-col">
+    <h1 class="uppercase my-8 text-5xl text-fuchsia-600">Dep Watch</h1>
+    <div class="flex justify-center">
+      <div class="w-52 mr-4">
+        <SideMenu :items="items" selected="dependencies" />
+      </div>
+      <div class="w-[32rem]">
+        <RouterView />
+      </div>
+    </div>
+  </div>
 </template>

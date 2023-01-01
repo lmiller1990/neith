@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import type { trpc } from "../trpc.js";
+import { DateTime } from "luxon";
 
 defineProps<{
   pkg: Awaited<ReturnType<typeof trpc["getDependencies"]["query"]>>;
 }>();
+
+function format(str: string) {
+  return DateTime.fromISO(str).toRelative();
+}
 </script>
 
 <template>
@@ -13,7 +18,7 @@ defineProps<{
     <h3 class="font-bold text-md">Tags</h3>
     <ul>
       <li v-for="tag of pkg.tags" :key="tag.name">
-        {{ tag.name }} • {{ tag.tag }} • {{ tag.published }}
+        {{ tag.name }} • {{ tag.tag }} • {{ format(tag.published) }}
       </li>
     </ul>
   </div>

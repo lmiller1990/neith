@@ -3,7 +3,6 @@ import type { TRPC_Router } from "../server/controllers/trpc.js";
 import { PORT } from "../shared/constants";
 
 export const trpc = createTRPCProxyClient<TRPC_Router>({
-  transformer: null,
   links: [
     httpBatchLink({
       url: `http://localhost:${PORT}/trpc`,

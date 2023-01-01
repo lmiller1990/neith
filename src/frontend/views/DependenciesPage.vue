@@ -1,16 +1,33 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import PkgInfo from "../components/PkgInfo.vue";
-import DependencyForm, { Pkg } from "./DependenciesPage/DependencyForm.vue";
+import Button from "../components/Button.vue";
+import { trpc } from "../trpc";
+import DependencyForm from "./DependenciesPage/DependencyForm.vue";
+import { useModal } from "../composables/modal";
 
-const pkg = ref<Pkg>();
+export type Modules = Awaited<
+  ReturnType<typeof trpc["getOrganizationModules"]["query"]>
+>;
 
-function setPkg(p: Pkg) {
-  pkg.value = p;
+const packages = ref<Modules>();
+
+async function fetchDependencies() {
+  packages.value = await trpc.getOrganizationModules.query();
 }
+
+fetchDependencies();
+
+const modal = useModal();
 </script>
 
 <template>
-  <PkgInfo v-if="pkg" :pkg="pkg" />
-  <DependencyForm @fetch-package="setPkg" />
+  <div>
+    <div class="flex justify-end mb-2">
+      <Button @click="modal.showModal('dependenciesForm')">Add</Button>
+    </div>
+    <div v-for="pkg of packages" :key="pkg.name" class="flex flex-col mb-4">
+      <PkgInfo :pkg="pkg" />
+    </div>
+  </div>
 </template>

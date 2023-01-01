@@ -1,10 +1,19 @@
 import { Knex } from "knex";
-import { notify_when } from "../../../dbschema.js";
+import { Modules, notify_when } from "../../../dbschema.js";
 import debugLib from "debug";
 
 const debug = debugLib("server:models:package");
 
 export const Package = {
+  async getModulesForOrganization(
+    db: Knex,
+    options: { organizationId: number }
+  ): Promise<Modules[]> {
+    return db("modules").where({
+      organization_id: options.organizationId,
+    });
+  },
+
   async saveModuleForOrganization(
     db: Knex,
     options: {

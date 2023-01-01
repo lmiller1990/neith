@@ -8,8 +8,18 @@ export type GetDependency = Awaited<
   ReturnType<typeof Registry["fetchPackage"]>
 >;
 
+export interface NpmPkg {
+  name: string;
+  description: string;
+  tags: Array<{
+    name: string;
+    tag: string;
+    published: string;
+  }>;
+}
+
 export const Registry = {
-  async fetchPackage(pkg: string) {
+  async fetchPackage(pkg: string): Promise<NpmPkg> {
     const res = await fetch(`${NPM}/${pkg}`, {
       headers: {
         "Content-Type": "application/json",

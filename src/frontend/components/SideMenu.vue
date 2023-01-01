@@ -11,11 +11,11 @@ const props = defineProps<{
 </script>
 
 <template>
-  <ul class="w-52">
+  <ul>
     <li
       v-for="item of items"
       :key="item.href"
-      class="my-2 rounded-lg capitalize hover:cursor-pointer hover:bg-gray-200"
+      class="mb-2 rounded-lg capitalize hover:cursor-pointer hover:bg-gray-200"
       :class="{
         'bg-white': props.selected !== item.name,
         'bg-gray-200': props.selected === item.name,
