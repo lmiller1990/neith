@@ -4,6 +4,10 @@ import type { ModuleInfo } from "../../types.js";
 
 const NPM = "https://registry.npmjs.org";
 
+export type GetDependency = Awaited<
+  ReturnType<typeof Registry["fetchPackage"]>
+>;
+
 export const Registry = {
   async fetchPackage(pkg: string) {
     const res = await fetch(`${NPM}/${pkg}`, {
