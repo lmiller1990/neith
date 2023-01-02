@@ -82,7 +82,7 @@ describe("notify", () => {
               notifyWhen: "major",
             },
           ],
-          jobLastRun: null,
+          jobLastRun: undefined,
           now: "2022-12-27T15:00:00.000Z",
           schedule: "weekly",
         };
@@ -118,7 +118,7 @@ describe("notify", () => {
               notifyWhen: "major",
             },
           ],
-          jobLastRun: null,
+          jobLastRun: undefined,
           now: "2022-12-27T15:00:00.000Z",
           schedule: "weekly",
         };
@@ -145,7 +145,7 @@ describe("notify", () => {
               notifyWhen: "major",
             },
           ],
-          jobLastRun: null,
+          jobLastRun: undefined,
           now: "2022-12-26T15:00:00.000Z",
           schedule: "daily",
         };
@@ -185,7 +185,7 @@ describe("notify", () => {
             notifyWhen: "minor",
           },
         ],
-        jobLastRun: null,
+        jobLastRun: undefined,
         now: "2022-12-26T15:00:00.000Z",
         schedule: "daily",
       };
@@ -224,7 +224,7 @@ describe("notify", () => {
             notifyWhen: "minor",
           },
         ],
-        jobLastRun: null,
+        jobLastRun: undefined,
         now: "2022-12-26T15:00:00.000Z",
         schedule: "daily",
       };

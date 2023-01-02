@@ -41,12 +41,10 @@ testMigration("20221223095059_addModuleTables", (verify) => {
   verify.down(async (client) => {
     expect.assertions(1);
 
-    for (const table of ["modules"]) {
-      try {
-        await client(table).count({ count: "*" });
-      } catch (e) {
-        expect(e.message).toContain(`relation "${table}" does not exist`);
-      }
+    try {
+      await client("modules").count({ count: "*" });
+    } catch (e: any) {
+      expect(e.message).toContain(`relation "modules" does not exist`);
     }
   });
 });

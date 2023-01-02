@@ -5,13 +5,13 @@ import { InvalidCredentialsError, OrganizationExistsError } from "../errors.js";
 
 const debug = debugLib("notifier:server:models:user");
 
-export class User {
-  static createSecurePassword(plaintext: string) {
+export const User = {
+  createSecurePassword(plaintext: string) {
     const saltRounds = 10;
     return bcrypt.hash(plaintext, saltRounds);
-  }
+  },
 
-  static async signIn(db: Knex, email: string, plaintext: string) {
+  async signIn(db: Knex, email: string, plaintext: string) {
     const org = await db("organizations")
       .where({ organization_email: email })
       .first();
@@ -30,9 +30,9 @@ export class User {
     }
 
     return org.id;
-  }
+  },
 
-  static async signUp(
+  async signUp(
     db: Knex,
     organzationName: string,
     email: string,
@@ -56,8 +56,17 @@ export class User {
       })
       .returning("id");
 
+    await db("jobs").insert({
+      job_description: `Default job for for organization ${id}`,
+      job_last_run: null,
+      job_name: "default_job",
+      job_schedule: "weekly",
+      job_starts_at: null,
+      organization_id: id,
+    });
+
     debug("created organization with id %s", id);
 
     return id;
-  }
-}
+  },
+};

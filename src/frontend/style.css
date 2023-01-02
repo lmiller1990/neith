@@ -5,3 +5,11 @@
 body {
   @apply bg-gray-100;
 }
+
+h2 {
+  @apply font-bold text-xl;
+}
+
+h3 {
+  @apply font-bold text-lg;
+}

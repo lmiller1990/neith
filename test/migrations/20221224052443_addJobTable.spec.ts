@@ -39,13 +39,13 @@ testMigration("20221224052443_addJobTable", (verify) => {
 
     try {
       await client("jobs").count({ count: "*" });
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toContain(`relation "jobs" does not exist`);
     }
 
     try {
       await client.raw(`select enum_range(null::schedule);`);
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toContain(`type "schedule" does not exist`);
     }
   });

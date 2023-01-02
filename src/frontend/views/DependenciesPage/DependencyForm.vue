@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { watchDebounced } from "@vueuse/core";
-import { ModuleCacheMap } from "vite-node/client";
 import { ref } from "vue";
 import { notifyWhen } from "../../../shared/constants.js";
 import Button from "../../components/Button.vue";

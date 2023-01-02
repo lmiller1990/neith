@@ -54,6 +54,7 @@
     "db:erd": "mmdc -i docs/DB.mmd -o db_erd.svg",
     "db:make": "npx knex migrate:make",
     "test:e2e": "cypress run --e2e",
+    "test:unit": "vitest --run",
     "lint": "prettier --write ."
   }
 }

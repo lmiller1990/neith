@@ -29,7 +29,8 @@ auth.post<{}, {}, { email: string; password: string }>(
       const sessionId = await Session.create(req.db, organizationId);
 
       res.cookie(...Session.makeSessionCookie(sessionId));
-    } catch (e) {
+    } catch (_err) {
+      const e = _err as Error;
       debug("failed to sign in user %s", e.message);
       return res.render("sign_in", {
         flash: {
@@ -59,7 +60,8 @@ auth.post<{}, {}, { organization: string; email: string; password: string }>(
       res.cookie(...Session.makeSessionCookie(sessionId));
 
       debug("created session with id %s", sessionId);
-    } catch (e) {
+    } catch (_err) {
+      const e = _err as Error;
       debug("failed to sign up user %s", e.message);
       return res.render("sign_up", {
         flash: {

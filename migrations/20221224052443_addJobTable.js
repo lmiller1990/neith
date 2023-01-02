@@ -11,7 +11,7 @@ export async function up(knex) {
     table.foreign("organization_id").references("id").inTable("organizations");
     table.text("job_name");
     table.text("job_description");
-    table.timestamp("job_starts_at").notNullable();
+    table.timestamp("job_starts_at");
     table.timestamp("job_last_run");
     table.enu("job_schedule", ["daily", "weekly"], {
       useNative: true,

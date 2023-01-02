@@ -1,16 +1,10 @@
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import assert from "node:assert";
-import { notify_when } from "../../../dbschema.js";
+import { notify_when, schedule } from "../../../dbschema.js";
+import { Job } from "../models/job.js";
 import { Package } from "../models/package.js";
-import { NpmPkg, Registry } from "../models/registry.js";
-
-// export const createContext = async (opts) => {
-
-//   return {
-//     db: knexClient,
-//   };
-// };
+import { Registry } from "../models/registry.js";
 
 export const createContext = ({ req, res }: CreateExpressContextOptions) => ({
   req,
@@ -56,7 +50,18 @@ export const trpc = t.router({
       return Package.saveModuleForOrganization(req.ctx.req.db, {
         name: req.input.name,
         notify: req.input.frequency,
+        organizationId: req.ctx.req.session.organizationId,
+      });
+    }),
+
+  saveFrequency: t.procedure
+    .input((schedule) => {
+      return schedule as schedule;
+    })
+    .mutation((req) => {
+      return Job.updateJobScheduleForOrganization(req.ctx.req.db, {
         organizationId: req.ctx.req.session.organizationId!,
+        jobSchedule: req.input,
       });
     }),
 });

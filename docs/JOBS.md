@@ -4,7 +4,7 @@ Our core functionality depends on executing jobs on a user defined schedule.
 
 ## Running Jobs
 
-There are many options for this.
+There are many options for this. Thread: https://twitter.com/Lachlan19900/status/1606497731954225157
 
 ### Cron
 
@@ -12,12 +12,19 @@ The classic unix utility, cron. We probably want to use some kind of JS wrapper,
 
 ### Node.js Packages
 
+- node-cron: https://www.npmjs.com/package/cron
 - node-reqsue: https://github.com/actionhero/node-resque#
 - node-schedule: https://github.com/node-schedule/node-schedule
 - agenda: https://github.com/agenda/agenda
 - bree: https://github.com/breejs/bree
 
 TODO: Evaluate options.
+
+### Other
+
+- pg_cron: https://github.com/citusdata/pg_cron
+- cron on GitHub Actions
+- pg-boss: https://github.com/timgit/pg-boss
 
 ### Managed Service
 
