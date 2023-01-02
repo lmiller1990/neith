@@ -13,7 +13,7 @@ function format(str: string) {
 </script>
 
 <template>
-  <Card>
+  <Card data-cy="pkg-info">
     <h2>{{ pkg.name }}</h2>
     <p class="text-md">{{ pkg.description }}</p>
     <h3>Tags</h3>

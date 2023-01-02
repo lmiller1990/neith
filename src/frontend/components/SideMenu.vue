@@ -16,6 +16,7 @@ const props = defineProps<{
       v-for="item of items"
       :key="item.href"
       class="mb-2 rounded-lg capitalize hover:cursor-pointer hover:bg-gray-200"
+      :data-cy-selected="selected === item.name"
       :class="{
         'bg-white': props.selected !== item.name,
         'bg-gray-200': props.selected === item.name,

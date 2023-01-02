@@ -36,6 +36,12 @@ describe("<DependencyForm />", () => {
         {/* @ts-ignore - dunno, figure it out */}
         <DependencyForm pkg={trpcResponse} />
       </div>
-    ));
+    ))
+      .get("input")
+      .type("vite");
+
+    cy.get("[data-cy='pkg-info']").contains(
+      "Native-ESM powered web dev build tool"
+    );
   });
 });

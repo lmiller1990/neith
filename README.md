@@ -10,6 +10,10 @@ The app uses:
 - [Vue.js](https://vuejs.org/) with the _Composition API_ and `<script setup>` for the syntax
 - [Express](https://expressjs.com/) for the HTTP server
 
+## Getting Started
+
+This project just uses plain old `npm`. Clone it and run `npm install`. You'll also need to create a database.
+
 ## Database
 
 The schema is managed with [knex](https://knexjs.org).
@@ -17,10 +21,13 @@ The schema is managed with [knex](https://knexjs.org).
 ### Creating a Database
 
 - Create a database (by default we assume your database is called **notifier_test**).
+  - You can run `createdb notifier_test` to create, and `dropdb notifier_test` to delete it).
 - Update `knexfile.js` with your credentials.
 - Run `npm run db:migrate` to run the migrations.
 
 ### Adding a Migration
+
+If you need to add a new table or modify an exist one, do so via a migration.
 
 - Run `npm db:make <name>`
 - Example: `npx knex migrate:make addOrganizationTable`
@@ -45,3 +52,9 @@ testMigration("20221220105733_addOrganizationTable", (verify) => {
   });
 });
 ```
+
+## Tests
+
+- Run the Cypress End to End test with `npm run test:e2e`.
+- Run the Node.js tests (eg, migrations etc) with `npm run test:component`
+- Run the Component tests with `npm run test:unit`
