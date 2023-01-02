@@ -6,6 +6,7 @@ The app uses:
 - [trpc](https://trpc.io/) for the API layer
 - [knex](https://knexjs.org/) for queries
 - [Vite](https://vitejs.dev/) for development and [Vitest](https://vitest.dev/) for testing
+- [Tailwind](https://tailwindcss.com/) for styling
 - [Cypress](https://www.cypress.io/) for End to End and Component Testing
 - [Vue.js](https://vuejs.org/) with the _Composition API_ and `<script setup>` for the syntax
 - [Express](https://expressjs.com/) for the HTTP server
