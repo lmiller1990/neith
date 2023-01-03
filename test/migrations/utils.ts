@@ -39,7 +39,7 @@ export async function testMigration(
 
       // migration
       await execa(`npm run db:migrate ${migration}.js`);
-      await execa(`npm run db:rollback ${migration}.js`);
+      await execa(`npm run db:down`);
 
       // run test
       const client = createKnex();

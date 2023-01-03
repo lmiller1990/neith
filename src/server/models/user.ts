@@ -36,7 +36,8 @@ export const User = {
     db: Knex,
     organzationName: string,
     email: string,
-    plaintext: string
+    plaintext: string,
+    timezone: string
   ) {
     const exists = await db("organizations")
       .where({ organization_email: email })
@@ -63,6 +64,7 @@ export const User = {
       job_schedule: "weekly",
       job_starts_at: null,
       organization_id: id,
+      timezone,
     });
 
     debug("created organization with id %s", id);

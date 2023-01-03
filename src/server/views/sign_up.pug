@@ -2,6 +2,8 @@ extends layout.pug
 
 block content
   form(method="POST" action="/sign_up")
+    input#timezone(name="timezone" type="hidden") 
+
     label(for="email") Email
     input#email(name="email" type="email")
 
@@ -15,3 +17,7 @@ block content
 
   if flash
     include includes/flash.pug
+
+  script.
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    document.querySelector("#timezone").value = timezone
