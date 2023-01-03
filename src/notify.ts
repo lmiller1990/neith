@@ -51,6 +51,10 @@ export function shouldNotify(
 ): boolean {
   const diff = semver.diff(previousMajor, currentMajor);
 
+  if (!diff) {
+    return false;
+  }
+
   switch (notifyWhen) {
     case "major": {
       return diff === "major";
