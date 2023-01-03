@@ -34,7 +34,7 @@ testMigration("20221228123809_addSessionTable", (verify) => {
 
     try {
       await client("sessions").count({ count: "*" });
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toContain(`relation "sessions" does not exist`);
     }
   });
