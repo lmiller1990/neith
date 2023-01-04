@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   deriveJobs,
   Job,
+  millisUntilNextDesginatedHour,
   millisUntilNextMonday,
   scheduleJobs,
 } from "../../../src/server/services/jobs.js";
@@ -49,6 +50,54 @@ describe("deriveJobs", () => {
         },
       ]
     `);
+  });
+});
+
+describe("millisUntilNextDesginatedHour", () => {
+  it("gets 9AM on the same day", () => {
+    // 8th of Jan 2023 is a Sunday.
+    // This function currently is hardcoded to get the next 9AM.
+    // In this case, it is in 1 hour time.
+    const now = DateTime.fromObject(
+      {
+        year: 2023,
+        month: 1,
+        day: 8,
+        hour: 8,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      },
+      { zone: "utc" }
+    );
+
+    const actual = millisUntilNextDesginatedHour(now, "utc");
+
+    // 3600000ms => 1 hour
+    expect(actual).toBe(3600000);
+  });
+
+  it("gets 9AM on next day", () => {
+    // 8th of Jan 2023 is a Sunday.
+    // This function currently is hardcoded to get the next 9AM.
+    // In this case, it is in 11 hours time.
+    const now = DateTime.fromObject(
+      {
+        year: 2023,
+        month: 1,
+        day: 8,
+        hour: 22,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      },
+      { zone: "utc" }
+    );
+
+    const actual = millisUntilNextDesginatedHour(now, "utc");
+
+    // 36000000ms => 10 hour
+    expect(actual).toBe(39600000);
   });
 });
 
@@ -118,7 +167,7 @@ describe("millisUntilNextMonday", () => {
 });
 
 describe("scheduleJobs", () => {
-  it.only("schedules and runs job", () =>
+  it("schedules and runs job", () =>
     new Promise<void>((done) => {
       let i = 0;
       const inc = () => Promise.resolve(i++);
@@ -136,20 +185,20 @@ describe("scheduleJobs", () => {
       ]);
 
       global.setTimeout(() => {
-        expect(complete).toBe(true)
-        expect(i).toBe(1)
+        expect(complete).toBe(true);
+        expect(i).toBe(1);
         // does not reschedule
-        expect(Array.from(scheduler.jobs.keys()).length).toBe(0)
-        done()
-      }, 1500)
+        expect(Array.from(scheduler.jobs.keys()).length).toBe(0);
+        done();
+      }, 1500);
     }));
 
   it("reschedules job", () =>
     new Promise<void>((done) => {
       let i = 0;
       const inc = () => {
-        i++
-        return Promise.resolve(i === 1 ? true : false)
+        i++;
+        return Promise.resolve(i === 1 ? true : false);
       };
 
       const scheduler = scheduleJobs([
@@ -164,14 +213,14 @@ describe("scheduleJobs", () => {
       ]);
 
       global.setTimeout(() => {
-        expect(i).toBe(1)
-      }, 700)
+        expect(i).toBe(1);
+      }, 700);
 
       global.setTimeout(() => {
-        expect(i).toBe(2)
-        console.log(scheduler.jobs)
-        expect(scheduler.jobs).toMatchInlineSnapshot('Map {}')
-        done()
-      }, 1200)
+        expect(i).toBe(2);
+        console.log(scheduler.jobs);
+        expect(scheduler.jobs).toMatchInlineSnapshot("Map {}");
+        done();
+      }, 1200);
     }));
 });
