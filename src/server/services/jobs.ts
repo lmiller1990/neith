@@ -30,10 +30,7 @@ export function millisUntilNextDesginatedHour(
   return d.diff(now, "milliseconds").toMillis();
 }
 
-export function millisUntilNextMonday(
-  now: DateTime,
-  timezone: string
-) {
+export function millisUntilNextMonday(now: DateTime, timezone: string) {
   const monday = 1;
   let d = now.setZone(timezone);
   while (d.weekday !== monday) {
@@ -61,7 +58,7 @@ interface JobToRun {
 
   /**
    * Function to execute when running job.
-   * 
+   *
    * If the callback resolves `false`, the job will not re-run,
    * even if `recurring` is provided.
    */
@@ -96,7 +93,7 @@ export function deriveJobs(now: DateTime, jobs: Job[]): JobToRun[] {
 class Scheduler {
   #jobs = new Map<number, NodeJS.Timeout>();
 
-  get jobs () {
+  get jobs() {
     return this.#jobs;
   }
 
