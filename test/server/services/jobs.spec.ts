@@ -118,7 +118,7 @@ describe("millisUntilNextMonday", () => {
 });
 
 describe("scheduleJobs", () => {
-  it("schedules and runs job", () =>
+  it.only("schedules and runs job", () =>
     new Promise<void>((done) => {
       let i = 0;
       const inc = () => Promise.resolve(i++);
@@ -138,7 +138,40 @@ describe("scheduleJobs", () => {
       global.setTimeout(() => {
         expect(complete).toBe(true)
         expect(i).toBe(1)
+        // does not reschedule
+        expect(Array.from(scheduler.jobs.keys()).length).toBe(0)
         done()
       }, 1500)
+    }));
+
+  it("reschedules job", () =>
+    new Promise<void>((done) => {
+      let i = 0;
+      const inc = () => {
+        i++
+        return Promise.resolve(i === 1 ? true : false)
+      };
+
+      const scheduler = scheduleJobs([
+        {
+          runInMillis: 500,
+          organizationId: 1,
+          callback: inc,
+          recurring: {
+            calculateNextExecutionMillis: () => 500,
+          },
+        },
+      ]);
+
+      global.setTimeout(() => {
+        expect(i).toBe(1)
+      }, 700)
+
+      global.setTimeout(() => {
+        expect(i).toBe(2)
+        console.log(scheduler.jobs)
+        expect(scheduler.jobs).toMatchInlineSnapshot('Map {}')
+        done()
+      }, 1200)
     }));
 });

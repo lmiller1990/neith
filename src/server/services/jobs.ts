@@ -17,8 +17,8 @@ export interface Job {
   organizationId: number;
   schedule: schedule;
   timezone: string;
-  callback : () => Promise<any>
-  doneCallback?: () => void
+  callback: () => Promise<any>;
+  doneCallback?: () => void;
 }
 
 export function millisUntilNextMonday(
@@ -44,20 +44,37 @@ interface JobToRun {
    * Number of milliseconds until this job should execute.
    */
   runInMillis: number;
+
   /**
    * Organization that job belongs to.
    */
   organizationId: number;
 
-  callback: () => Promise<any>
+  /**
+   * Function to execute when running job.
+   * 
+   * If the callback resolves `false`, the job will not re-run,
+   * even if `recurring` is provided.
+   */
+  callback: () => Promise<any>;
 
-  doneCallback?: () => void
+  /**
+   * Optional callback, executed when the job has finished running.
+   */
+  doneCallback?: () => void;
+
+  /**
+   * A job can be recurring. If so, a function that calculates
+   * when it should next run should be provided.
+   * The function should return the number of milliseconds until
+   * the next execution.
+   */
+  recurring?: {
+    calculateNextExecutionMillis: () => number;
+  };
 }
 
-export function deriveJobs(
-  now: DateTime,
-  jobs: Job[]
-): JobToRun[] {
+export function deriveJobs(now: DateTime, jobs: Job[]): JobToRun[] {
   return jobs.map((job) => {
     const runInMillis = millisUntilNextMonday(now, job.timezone);
     return {
@@ -75,18 +92,24 @@ export function deriveJobs(
 class Scheduler {
   #jobs = new Map<number, NodeJS.Timeout>();
 
-  schedule(
-    id: number,
-    runInMillis: number,
-    job: () => Promise<void>,
-    doneCallback?: () => void
-  ) {
-    const timeoutID = global.setTimeout(async () => {
-      await job();
-      doneCallback?.();
-    }, runInMillis);
+  get jobs () {
+    return this.#jobs;
+  }
 
-    this.#jobs.set(id, timeoutID);
+  schedule(jobToRun: JobToRun) {
+    const timeoutID = global.setTimeout(async () => {
+      const repeat = await jobToRun.callback();
+      jobToRun.doneCallback?.();
+      this.#jobs.delete(jobToRun.organizationId);
+      if (repeat !== false && jobToRun.recurring) {
+        this.schedule({
+          ...jobToRun,
+          runInMillis: jobToRun.recurring.calculateNextExecutionMillis(),
+        });
+      }
+    }, jobToRun.runInMillis);
+
+    this.#jobs.set(jobToRun.organizationId, timeoutID);
   }
 }
 
@@ -94,13 +117,8 @@ const scheduler = new Scheduler();
 
 export function scheduleJobs(jobs: JobToRun[]) {
   for (const job of jobs) {
-    scheduler.schedule(
-      job.organizationId,
-      job.runInMillis,
-      job.callback,
-      job.doneCallback
-    );
-
-    return scheduler
+    scheduler.schedule(job);
   }
+
+  return scheduler;
 }
