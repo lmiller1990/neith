@@ -5,26 +5,22 @@ import { notifyWhen } from "../../../shared/constants.js";
 import Button from "../../components/Button.vue";
 import Input from "../../components/Input.vue";
 import PkgInfo from "../../components/PkgInfo.vue";
+import { useDisableWhileExecuting } from "../../composables/loading";
 import { useModal } from "../../composables/modal.js";
 import { trpc } from "../../trpc";
 
 export type Pkg = Awaited<ReturnType<typeof trpc["getDependencies"]["query"]>>;
 
+const { loading, disableWhileRunning } = useDisableWhileExecuting();
+
 const pkgName = ref("");
 const pkg = ref<Pkg>();
 const frequency = ref<typeof notifyWhen[number]>("major");
-const loading = ref(false);
 
 const modal = useModal();
 
-async function disableWhileRuning(task: () => Promise<void>) {
-  loading.value = true;
-  await task();
-  loading.value = false;
-}
-
 async function fetchPackageData(search: string) {
-  disableWhileRuning(async () => {
+  disableWhileRunning(async () => {
     pkg.value = await trpc.getDependencies.query(search.toLowerCase());
   });
 }
@@ -32,7 +28,7 @@ async function fetchPackageData(search: string) {
 watchDebounced(pkgName, fetchPackageData, { debounce: 500 });
 
 async function handleSubmit() {
-  await disableWhileRuning(async () => {
+  await disableWhileRunning(async () => {
     await trpc.savePackage.mutate({
       name: pkgName.value.toLowerCase(),
       frequency: frequency.value,
