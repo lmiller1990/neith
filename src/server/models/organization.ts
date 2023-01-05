@@ -4,9 +4,11 @@ import {
   Jobs,
   Modules,
   notify_when,
+  Organizations,
   schedule,
 } from "../../../dbschema.js";
 import debugLib from "debug";
+import { update } from "cypress/types/lodash/index.js";
 
 const debug = debugLib("server:models:organization");
 
@@ -15,6 +17,42 @@ interface NotificationSettings {
 }
 
 export const Organization = {
+  async getOrganizationById(
+    db: Knex,
+    options: { organizationId: number }
+  ): Promise<Organizations> {
+    const org = await db("organizations")
+      .where({
+        id: options.organizationId,
+      })
+      .first();
+
+    if (!org) {
+      debug(`Did not find org for organization_id: %s`, options.organizationId);
+      throw new Error(
+        `Did not find org for organization_id: ${options.organizationId}`
+      );
+    }
+
+    return org;
+  },
+
+  async updateOrganization(
+    db: Knex,
+    options: { organizationId: number; props: Partial<Organizations> }
+  ): Promise<void> {
+    const { id, ...props } = options.props;
+    try {
+      await db("organizations")
+        .where({
+          id: options.organizationId,
+        })
+        .update(props);
+    } catch (e) {
+      debug(`Could not update organzation with invalid props %o`, options);
+    }
+  },
+
   async getJob(db: Knex, options: { organizationId: number }): Promise<Jobs> {
     const job = await db("jobs")
       .where({

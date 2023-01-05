@@ -163,12 +163,16 @@ export interface Organizations {
   organization_name: string;
   organization_email: string;
   organization_password: string;
+  slack_workspace: string | null;
+  slack_channel: string | null;
 }
 export interface OrganizationsInput {
   id?: number;
   organization_name: string;
   organization_email: string;
   organization_password: string;
+  slack_workspace?: string | null;
+  slack_channel?: string | null;
 }
 const organizations = {
   tableName: "organizations",
@@ -177,6 +181,8 @@ const organizations = {
     "organization_name",
     "organization_email",
     "organization_password",
+    "slack_workspace",
+    "slack_channel",
   ],
   requiredForInsert: [
     "organization_name",

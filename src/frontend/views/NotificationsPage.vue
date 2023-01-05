@@ -8,6 +8,7 @@ import Card from "../components/Card.vue";
 import TrashIcon from "../components/TrashIcon.vue";
 import { useModal } from "../composables/modal";
 import { trpc } from "../trpc.js";
+import SlackCard from "./NotificationsPage/SlackCard.vue";
 
 const frequency = ref<schedule>("weekly");
 
@@ -109,4 +110,6 @@ const deleteEmail = useMutation({
       </Button>
     </div>
   </Card>
+
+  <SlackCard />
 </template>

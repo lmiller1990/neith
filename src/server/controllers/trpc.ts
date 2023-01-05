@@ -1,7 +1,7 @@
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import assert from "node:assert";
-import { notify_when, schedule } from "../../../dbschema.js";
+import { notify_when, Organizations, schedule } from "../../../dbschema.js";
 import { Job } from "../models/job.js";
 import { Organization } from "../models/organization.js";
 import { Package } from "../models/package.js";
@@ -113,6 +113,21 @@ export const trpc = t.router({
       return Job.updateJobScheduleForOrganization(req.ctx.req.db, {
         organizationId: req.ctx.req.session.organizationId!,
         jobSchedule: req.input,
+      });
+    }),
+
+  getOrganization: t.procedure.query(async (req) => {
+    return Organization.getOrganizationById(req.ctx.req.db, {
+      organizationId: req.ctx.req.session.organizationId!,
+    });
+  }),
+
+  updateOrganization: t.procedure
+    .input((input) => input as Partial<Organizations>)
+    .mutation(async (req) => {
+      return Organization.updateOrganization(req.ctx.req.db, {
+        organizationId: req.ctx.req.session.organizationId!,
+        props: req.input,
       });
     }),
 });
