@@ -18,7 +18,6 @@ const items: MenuLink[] = [
 ];
 
 const modal = useModal();
-console.log(modal.show.value);
 
 function handleHideModal(event: Event) {
   if ((event.target as HTMLDivElement).id !== "modal") {

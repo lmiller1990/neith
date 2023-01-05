@@ -1,6 +1,7 @@
 {
   "type": "module",
   "dependencies": {
+    "@tanstack/vue-query": "^4.20.9",
     "@trpc/client": "10.7.0",
     "@trpc/server": "10.7.0",
     "@types/bcrypt": "^5.0.0",
@@ -51,7 +52,7 @@
     "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
     "db:down": "POSTGRES_DB=notifier_test knex migrate:down",
     "db:test": "POSTGRES_DB=notifier_test vitest --run --threads=false",
-    "db:types": "POSTGRES_DB=notifier_test node --loader ts-node/esm  scripts/dbToTs.ts",
+    "db:types": "POSTGRES_DB=notifier_test node --loader ts-node/esm/transpile-only  scripts/dbToTs.ts",
     "db:erd": "mmdc -i docs/DB.mmd -o db_erd.svg",
     "db:make": "npx knex migrate:make",
     "test:e2e": "cypress run --e2e",

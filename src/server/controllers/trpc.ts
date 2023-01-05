@@ -3,6 +3,7 @@ import type { CreateExpressContextOptions } from "@trpc/server/adapters/express"
 import assert from "node:assert";
 import { notify_when, schedule } from "../../../dbschema.js";
 import { Job } from "../models/job.js";
+import { Organization } from "../models/organization.js";
 import { Package } from "../models/package.js";
 import { Registry } from "../models/registry.js";
 
@@ -37,6 +38,54 @@ export const trpc = t.router({
     .query((req) => {
       return Registry.fetchPackage(req.input);
     }),
+
+  getOrganizationEmails: t.procedure.query(async (req) => {
+    assert(
+      req.ctx.req.session.organizationId,
+      `organizationId should be defined`
+    );
+    const emails = await Organization.getEmails(req.ctx.req.db, {
+      organizationId: req.ctx.req.session.organizationId,
+    });
+    return emails;
+  }),
+
+  deleteEmail: t.procedure.input((id) => id as number).mutation(async (req) => {
+      assert(
+        req.ctx.req.session.organizationId,
+        `organizationId should be defined`
+      );
+      return Organization.deleteEmail(req.ctx.req.db, {
+        organizationId: req.ctx.req.session.organizationId,
+        id: req.input,
+      });
+  }),
+
+  addEmail: t.procedure
+    .input((value) => {
+      return value as string;
+    })
+    .mutation((req) => {
+      assert(
+        req.ctx.req.session.organizationId,
+        `organizationId should be defined`
+      );
+      return Organization.addEmail(req.ctx.req.db, {
+        organizationId: req.ctx.req.session.organizationId,
+        email: req.input,
+      });
+    }),
+
+  getNotificationSettings: t.procedure.query(async (req) => {
+    assert(
+      req.ctx.req.session.organizationId,
+      `organizationId should be defined`
+    );
+    const model = await Organization.getNotificationSettings(req.ctx.req.db, {
+      organizationId: req.ctx.req.session.organizationId,
+    });
+    return model;
+  }),
 
   savePackage: t.procedure
     .input((pkg) => {

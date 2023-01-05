@@ -1,6 +1,7 @@
 import { Knex } from "knex";
 import { schedule } from "../../../dbschema.js";
 import debugLib from "debug";
+import { Organization } from "./organization.js";
 
 const debug = debugLib("server:models:job");
 
@@ -12,22 +13,13 @@ export const Job = {
       organizationId: number;
     }
   ): Promise<void> {
-    const job = await db("jobs")
-      .where({
-        organization_id: options.organizationId,
-      })
-      .first();
-
-    if (!job) {
-      debug(`Did not find job for organization_id: %s`, options.organizationId);
-      throw new Error(
-        `Did not find job for organization_id: ${options.organizationId}`
-      );
-    }
+    const job = await Organization.getJob(db, {
+      organizationId: options.organizationId,
+    });
 
     return db("jobs")
       .where({
-        organization_id: options.organizationId,
+        id: job.id,
       })
       .update({
         job_schedule: options.jobSchedule,

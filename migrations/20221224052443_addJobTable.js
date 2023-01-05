@@ -16,7 +16,7 @@ export async function up(knex) {
     table.enu("job_schedule", ["daily", "weekly"], {
       useNative: true,
       enumName: "schedule",
-    });
+    }).notNullable();
   });
 }
 
