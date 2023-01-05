@@ -44,33 +44,35 @@ auth.post<{}, {}, { email: string; password: string }>(
   }
 );
 
-auth.post<{}, {}, { organization: string; email: string; password: string }>(
-  "/sign_up",
-  async (req, res) => {
-    debug("/sign_up: got req with body %o", req.body);
-    try {
-      const organizationId = await User.signUp(
-        req.db,
-        req.body.organization,
-        req.body.email,
-        req.body.password
-      );
+auth.post<
+  {},
+  {},
+  { timezone: string; organization: string; email: string; password: string }
+>("/sign_up", async (req, res) => {
+  debug("/sign_up: got req with body %o", req.body);
+  try {
+    const organizationId = await User.signUp(
+      req.db,
+      req.body.organization,
+      req.body.email,
+      req.body.password,
+      req.body.timezone
+    );
 
-      const sessionId = await Session.create(req.db, organizationId);
-      res.cookie(...Session.makeSessionCookie(sessionId));
+    const sessionId = await Session.create(req.db, organizationId);
+    res.cookie(...Session.makeSessionCookie(sessionId));
 
-      debug("created session with id %s", sessionId);
-    } catch (_err) {
-      const e = _err as Error;
-      debug("failed to sign up user %s", e.message);
-      return res.render("sign_up", {
-        flash: {
-          type: "error",
-          message: e.message,
-        },
-      });
-    }
-
-    res.redirect("/app");
+    debug("created session with id %s", sessionId);
+  } catch (_err) {
+    const e = _err as Error;
+    debug("failed to sign up user %s", e.message);
+    return res.render("sign_up", {
+      flash: {
+        type: "error",
+        message: e.message,
+      },
+    });
   }
-);
+
+  res.redirect("/app");
+});
