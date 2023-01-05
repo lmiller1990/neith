@@ -12,29 +12,24 @@ const email = ref("");
 
 const modal = useModal();
 
-const queryClient = useQueryClient()
+const queryClient = useQueryClient();
 
 const addEmail = useMutation({
   mutationFn: () => trpc.addEmail.mutate(email.value),
   onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['emails'] })
+    queryClient.invalidateQueries({ queryKey: ["emails"] });
     modal.hideModal();
-  }
-})
+  },
+});
 
 async function handleSubmit() {
-  addEmail.mutate()
+  addEmail.mutate();
 }
 </script>
 
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col">
-    <Input
-      name="email"
-      v-model="email"
-      label="Email"
-      placeholder=""
-    />
+    <Input name="email" v-model="email" label="Email" placeholder="" />
 
     <div class="flex justify-end">
       <Button :disabled="addEmail.isLoading.value">Submit</Button>

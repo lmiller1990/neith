@@ -8,5 +8,5 @@ const app = createApp(App);
 const router = createRouter();
 
 app.use(router);
-app.use(VueQueryPlugin)
+app.use(VueQueryPlugin);
 app.mount("#root");

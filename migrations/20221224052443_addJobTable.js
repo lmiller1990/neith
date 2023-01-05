@@ -13,10 +13,12 @@ export async function up(knex) {
     table.text("job_description");
     table.timestamp("job_starts_at");
     table.timestamp("job_last_run");
-    table.enu("job_schedule", ["daily", "weekly"], {
-      useNative: true,
-      enumName: "schedule",
-    }).notNullable();
+    table
+      .enu("job_schedule", ["daily", "weekly"], {
+        useNative: true,
+        enumName: "schedule",
+      })
+      .notNullable();
   });
 }
 

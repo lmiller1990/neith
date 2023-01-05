@@ -41,10 +41,12 @@ export const Organization = {
       options.id,
       options.organizationId
     );
-    return db("emails").where({
-      id: options.id,
-      organization_id: options.organizationId,
-    }).delete();
+    return db("emails")
+      .where({
+        id: options.id,
+        organization_id: options.organizationId,
+      })
+      .delete();
   },
 
   async addEmail(

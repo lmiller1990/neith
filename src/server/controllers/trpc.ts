@@ -50,7 +50,9 @@ export const trpc = t.router({
     return emails;
   }),
 
-  deleteEmail: t.procedure.input((id) => id as number).mutation(async (req) => {
+  deleteEmail: t.procedure
+    .input((id) => id as number)
+    .mutation(async (req) => {
       assert(
         req.ctx.req.session.organizationId,
         `organizationId should be defined`
@@ -59,7 +61,7 @@ export const trpc = t.router({
         organizationId: req.ctx.req.session.organizationId,
         id: req.input,
       });
-  }),
+    }),
 
   addEmail: t.procedure
     .input((value) => {

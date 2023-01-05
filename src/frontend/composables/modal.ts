@@ -1,6 +1,6 @@
 import { ref, shallowRef } from "vue";
 import DependenciesForm from "../views/DependenciesPage/DependencyForm.vue";
-import EmailForm from "../views/NotificationsPage/EmailForm.vue"
+import EmailForm from "../views/NotificationsPage/EmailForm.vue";
 
 const show = ref(false);
 const component = shallowRef();
