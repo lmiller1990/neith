@@ -9,14 +9,17 @@ export function createRouter() {
     routes: [
       {
         path: "/",
+        name: "dependencies",
         component: DependenciesPage,
       },
       {
         path: "/notifications",
+        name: "notifications",
         component: NotificationsPage,
       },
       {
         path: "/account",
+        name: "account",
         component: AccountPage,
       },
     ],

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import SideMenu, { MenuLink } from "./components/SideMenu.vue";
 import { useModal } from "./composables/modal.js";
 
@@ -25,6 +27,8 @@ function handleHideModal(event: Event) {
   }
   modal.hideModal();
 }
+
+const route = useRoute();
 </script>
 
 <template>
@@ -44,7 +48,7 @@ function handleHideModal(event: Event) {
     <h1 class="uppercase my-8 text-5xl text-fuchsia-600">Dep Watch</h1>
     <div class="flex justify-center">
       <div class="w-52 mr-4">
-        <SideMenu :items="items" selected="dependencies" />
+        <SideMenu :items="items" :selected="route.name?.toString()" />
       </div>
       <div class="w-[32rem]">
         <RouterView />

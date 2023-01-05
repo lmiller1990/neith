@@ -8,7 +8,7 @@ html.get("/", (req, res) => {
   res.render("index");
 });
 
-html.get("/app", requiresAuth, (_req, res) => {
+html.get("/app/*", requiresAuth, (_req, res) => {
   if (process.env.NODE_ENV === "development") {
     res.send(Html.appDev).end();
   } else {
