@@ -145,7 +145,11 @@ export function startScheduler() {
 
   const scheduler = scheduleJobs([
     {
-      runInMillis: millisUntilNextDesginatedHour(DateTime.now(), 'Australia/Brisbane', 19),
+      runInMillis: millisUntilNextDesginatedHour(
+        DateTime.now(),
+        "Australia/Brisbane",
+        19
+      ),
       organizationId: 1,
       callback: () => {
         console.log("Running job!");

@@ -12,7 +12,7 @@ html.get("/app/*", requiresAuth, (_req, res) => {
   if (process.env.NODE_ENV === "development") {
     res.send(Html.appDev()).end();
   } else {
-    console.log(Html.appProd())
+    console.log(Html.appProd());
     res.send(Html.appProd()).end();
   }
 });
