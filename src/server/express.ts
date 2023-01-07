@@ -7,17 +7,15 @@ import knex from "knex";
 import type { Knex } from "knex";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+// @ts-expect-error
 import knexConfig from "../../knexfile.js";
 import { sessionMiddleware } from "./session.js";
 import { contextMiddleware } from "./context.js";
 import { html } from "./controllers/html.js";
 import { auth } from "./controllers/auth.js";
-import debugLib from "debug";
 import { requiresAuth } from "./middleware/requiresAuth.js";
 import { createContext, trpc } from "./controllers/trpc.js";
-import { inferAsyncReturnType } from "@trpc/server";
-
-const debug = debugLib("server:express");
+import { startScheduler } from "./services/jobs.js";
 
 declare global {
   namespace Express {
@@ -33,7 +31,10 @@ declare global {
 
 export const knexClient = knex(knexConfig);
 
+startScheduler();
+
 const app = express();
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(

@@ -4,9 +4,22 @@ import {
   deriveJobs,
   Job,
   millisUntilNextDesginatedHour,
-  millisUntilNextMonday,
+  millisUntilNextMondayAtHours,
   scheduleJobs,
 } from "../../../src/server/services/jobs.js";
+
+function toHuman(ms: number) {
+  let s = ms / 1000;
+  const h = Math.floor(s / 60 / 60);
+  const r = s - h * 60 * 60;
+  const m = Math.floor(r / 60);
+  const secs = r - m * 60;
+  return {
+    hours: h,
+    mins: m,
+    secs: secs,
+  };
+}
 
 describe("deriveJobs", () => {
   it("handles weekly job", () => {
@@ -75,6 +88,13 @@ describe("millisUntilNextDesginatedHour", () => {
 
     // 3600000ms => 1 hour
     expect(actual).toBe(3600000);
+    expect(toHuman(actual)).toMatchInlineSnapshot(`
+      {
+        "hours": 1,
+        "mins": 0,
+        "secs": 0,
+      }
+    `);
   });
 
   it("gets 9AM on next day", () => {
@@ -96,12 +116,47 @@ describe("millisUntilNextDesginatedHour", () => {
 
     const actual = millisUntilNextDesginatedHour(now, "utc");
 
-    // 36000000ms => 10 hour
+    // 36000000ms => 11 hours
     expect(actual).toBe(39600000);
+    expect(toHuman(actual)).toMatchInlineSnapshot(`
+      {
+        "hours": 11,
+        "mins": 0,
+        "secs": 0,
+      }
+    `);
+  });
+
+  it("gets 9AM on next day if the current time is 9:00.XX", () => {
+    // 9th of Jan 2023 is a Monday.
+    const now = DateTime.fromObject(
+      {
+        year: 2023,
+        month: 1,
+        day: 9,
+        hour: 9,
+        minute: 4,
+        second: 1,
+        millisecond: 0,
+      },
+      { zone: "utc" }
+    );
+
+    const actual = millisUntilNextDesginatedHour(now, "utc");
+
+    expect(toHuman(actual)).toMatchInlineSnapshot(`
+      {
+        "hours": 23,
+        "mins": 55,
+        "secs": 59,
+      }
+    `);
+    // 86159000ms => 23h 56m 59s
+    expect(actual).toBe(86159000);
   });
 });
 
-describe("millisUntilNextMonday", () => {
+describe("millisUntilNextMondayAtHours", () => {
   it("works when now is in previous week", () => {
     // 8th of Jan 2023 is a Sunday.
     const now = DateTime.fromObject(
@@ -117,9 +172,16 @@ describe("millisUntilNextMonday", () => {
       { zone: "utc" }
     );
 
-    const actual = millisUntilNextMonday(now, "utc");
+    const actual = millisUntilNextMondayAtHours(now, "utc");
 
     // 24 hours
+    expect(toHuman(actual)).toMatchInlineSnapshot(`
+      {
+        "hours": 24,
+        "mins": 0,
+        "secs": 0,
+      }
+    `);
     expect(actual).toBe(86400000);
   });
 
@@ -138,10 +200,17 @@ describe("millisUntilNextMonday", () => {
       { zone: "America/New_York" }
     );
 
-    const actual = millisUntilNextMonday(now, "America/New_York");
+    const actual = millisUntilNextMondayAtHours(now, "America/New_York");
 
     // 24 hours
     expect(actual).toBe(86400000);
+    expect(toHuman(actual)).toMatchInlineSnapshot(`
+      {
+        "hours": 24,
+        "mins": 0,
+        "secs": 0,
+      }
+    `);
   });
 
   it("gets correct value when comparing utc and specific timezone", () => {
@@ -159,9 +228,16 @@ describe("millisUntilNextMonday", () => {
       { zone: "utc" }
     );
 
-    const actual = millisUntilNextMonday(now, "America/New_York");
+    const actual = millisUntilNextMondayAtHours(now, "America/New_York");
 
     // 29h => 104400000ms
+    expect(toHuman(actual)).toMatchInlineSnapshot(`
+      {
+        "hours": 29,
+        "mins": 0,
+        "secs": 0,
+      }
+    `);
     expect(actual).toBe(104400000);
   });
 });
@@ -218,7 +294,6 @@ describe("scheduleJobs", () => {
 
       global.setTimeout(() => {
         expect(i).toBe(2);
-        console.log(scheduler.jobs);
         expect(scheduler.jobs).toMatchInlineSnapshot("Map {}");
         done();
       }, 1200);

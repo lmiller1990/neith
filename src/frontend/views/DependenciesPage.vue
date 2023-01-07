@@ -1,22 +1,18 @@
 <script lang="ts" setup>
-import { ref } from "vue";
 import PkgInfo from "../components/PkgInfo.vue";
 import Button from "../components/Button.vue";
-import { trpc } from "../trpc";
-import DependencyForm from "./DependenciesPage/DependencyForm.vue";
-import { useModal } from "../composables/modal";
+import { trpc } from "../trpc.js";
+import { useModal } from "../composables/modal.js";
+import { useQuery } from "@tanstack/vue-query";
 
 export type Modules = Awaited<
   ReturnType<typeof trpc["getOrganizationModules"]["query"]>
 >;
 
-const packages = ref<Modules>();
-
-async function fetchDependencies() {
-  packages.value = await trpc.getOrganizationModules.query();
-}
-
-fetchDependencies();
+const depsQuery = useQuery({
+  queryKey: ["dependencies"],
+  queryFn: () => trpc.getOrganizationModules.query(),
+});
 
 const modal = useModal();
 </script>
@@ -26,7 +22,11 @@ const modal = useModal();
     <div class="flex justify-end mb-2">
       <Button @click="modal.showModal('dependenciesForm')">Add</Button>
     </div>
-    <div v-for="pkg of packages" :key="pkg.name" class="flex flex-col mb-4">
+    <div
+      v-for="pkg of depsQuery.data.value"
+      :key="pkg.name"
+      class="flex flex-col mb-4"
+    >
       <PkgInfo :pkg="pkg" />
     </div>
   </div>

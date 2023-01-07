@@ -1,13 +1,14 @@
 <script lang="ts" setup>
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { watchDebounced } from "@vueuse/core";
 import { ref } from "vue";
 import { notifyWhen } from "../../../shared/constants.js";
 import Button from "../../components/Button.vue";
 import Input from "../../components/Input.vue";
 import PkgInfo from "../../components/PkgInfo.vue";
-import { useDisableWhileExecuting } from "../../composables/loading";
+import { useDisableWhileExecuting } from "../../composables/loading.js";
 import { useModal } from "../../composables/modal.js";
-import { trpc } from "../../trpc";
+import { trpc } from "../../trpc.js";
 
 export type Pkg = Awaited<ReturnType<typeof trpc["getDependencies"]["query"]>>;
 
@@ -27,19 +28,23 @@ async function fetchPackageData(search: string) {
 
 watchDebounced(pkgName, fetchPackageData, { debounce: 500 });
 
-async function handleSubmit() {
-  await disableWhileRunning(async () => {
-    await trpc.savePackage.mutate({
+const queryClient = useQueryClient();
+
+const savePackageMutation = useMutation({
+  mutationFn: () =>
+    trpc.savePackage.mutate({
       name: pkgName.value.toLowerCase(),
       frequency: frequency.value,
-    });
-  });
-  modal.hideModal();
-}
+    }),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["dependencies"] });
+    modal.hideModal();
+  },
+});
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit" class="flex flex-col">
+  <form @submit.prevent="savePackageMutation.mutate()" class="flex flex-col">
     <Input
       name="pkgName"
       v-model="pkgName"

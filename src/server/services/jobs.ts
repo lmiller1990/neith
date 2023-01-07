@@ -1,5 +1,8 @@
 import { DateTime } from "luxon";
 import { schedule } from "../../../dbschema.js";
+import debugLib from "debug";
+
+const debug = debugLib("server:services:jobs");
 
 /**
  * Get a list of all jobs and the next scheduled date.
@@ -19,28 +22,41 @@ export function millisUntilNextDesginatedHour(
   hour = 9
 ) {
   let d = now.setZone(timezone);
-  while (d.hour !== hour) {
-    d = d.plus({ hour: 1 }).set({
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
+
+  if (d.hour === hour) {
+    d = d.plus({ hour: 1 });
   }
+
+  while (d.hour !== hour) {
+    d = d.plus({ hour: 1 });
+  }
+
+  d = d.set({
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  });
 
   return d.diff(now, "milliseconds").toMillis();
 }
-
-export function millisUntilNextMonday(now: DateTime, timezone: string) {
+export function millisUntilNextMondayAtHours(
+  now: DateTime,
+  timezone: string,
+  hours = 9
+) {
   const monday = 1;
   let d = now.setZone(timezone);
+
   while (d.weekday !== monday) {
-    d = d.plus({ day: 1 }).set({
-      hour: 9,
-      minute: 0,
-      second: 0,
-      millisecond: 0,
-    });
+    d = d.plus({ day: 1 });
   }
+
+  d = d.set({
+    hour: hours,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  });
 
   return d.diff(now, "milliseconds").toMillis();
 }
@@ -82,7 +98,7 @@ interface JobToRun {
 
 export function deriveJobs(now: DateTime, jobs: Job[]): JobToRun[] {
   return jobs.map((job) => {
-    const runInMillis = millisUntilNextMonday(now, job.timezone);
+    const runInMillis = millisUntilNextMondayAtHours(now, job.timezone);
     return {
       ...job,
       runInMillis,
@@ -120,6 +136,26 @@ export function scheduleJobs(jobs: JobToRun[]) {
   for (const job of jobs) {
     scheduler.schedule(job);
   }
+
+  return scheduler;
+}
+
+export function startScheduler() {
+  debug("Starting scheduler...");
+
+  const scheduler = scheduleJobs([
+    {
+      runInMillis: 5000,
+      organizationId: 1,
+      callback: () => {
+        console.log("Running job!");
+        return Promise.resolve();
+      },
+      recurring: {
+        calculateNextExecutionMillis: () => 1000,
+      },
+    },
+  ]);
 
   return scheduler;
 }
