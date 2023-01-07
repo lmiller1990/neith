@@ -32,7 +32,7 @@ export async function sessionMiddleware(
   if (sessionId && session) {
     req.session = {
       id: session.id,
-      organizationId: session.organization_id,
+      organizationId: parseInt(session.organization_id, 10),
     };
     return next();
   }

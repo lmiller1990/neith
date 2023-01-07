@@ -60,6 +60,10 @@
     "test:e2e": "cypress run --e2e",
     "test:unit": "vitest --run",
     "test:component": "cypress run --component",
-    "lint": "prettier --write ."
+    "lint": "prettier --write .",
+    "build:server": "tsc --project src/server",
+    "build:frontend": "vite build src/frontend",
+    "build": "npm run build:server && npm run build:frontend",
+    "clean": "rm -rf src/*.js src/**/*.js"
   }
 }

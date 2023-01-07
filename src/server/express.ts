@@ -1,6 +1,6 @@
 import express from "express";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import path from "path";
+import path from "node:path";
 import { PORT } from "../shared/constants.js";
 import url from "node:url";
 import knex from "knex";
@@ -56,6 +56,21 @@ app.use(auth);
 app.get("/app/*", (_req, res) => {
   res.redirect("/app");
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.get<{ id: string }>("/assets/:id", async (req, res) => {
+    req.params.id;
+    const assetPath = path.join(
+      __dirname,
+      "..",
+      "frontend",
+      "dist",
+      "assets",
+      req.params.id
+    );
+    res.sendFile(assetPath);
+  });
+}
 
 app.use(
   "/trpc",

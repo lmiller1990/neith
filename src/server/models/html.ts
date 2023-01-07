@@ -1,5 +1,19 @@
-export class Html {
-  static get appDev() {
+import fs from "node:fs";
+import url from "node:url";
+import path from "node:path";
+
+let prodHtml = "";
+
+if (process.env.NODE_ENV === "production") {
+  const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+  prodHtml = fs.readFileSync(
+    path.join(__dirname, "..", "..", "frontend", "dist", "index.html"),
+    "utf-8"
+  );
+}
+
+export const Html = {
+  appDev() {
     const html = `
       <!DOCTYPE html>
       <html lang="en">
@@ -21,5 +35,9 @@ export class Html {
     `;
 
     return html;
-  }
-}
+  },
+
+  appProd() {
+    return prodHtml;
+  },
+};

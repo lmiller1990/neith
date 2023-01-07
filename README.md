@@ -59,3 +59,8 @@ testMigration("20221220105733_addOrganizationTable", (verify) => {
 - Run the Cypress End to End test with `npm run test:e2e`.
 - Run the Node.js tests (eg, migrations etc) with `npm run test:component`
 - Run the Component tests with `npm run test:unit`
+
+## Deployment
+
+- Build the server and frontend with `npm run build`.
+- To start the server, `cd src/server` and run `NODE_ENV=production POSTGRES_USER=<user> POSTGRES_PASSWORD=<password node express.js`.

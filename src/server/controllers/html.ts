@@ -10,8 +10,9 @@ html.get("/", (req, res) => {
 
 html.get("/app/*", requiresAuth, (_req, res) => {
   if (process.env.NODE_ENV === "development") {
-    res.send(Html.appDev).end();
+    res.send(Html.appDev()).end();
   } else {
-    throw new Error("TODO!");
+    console.log(Html.appProd())
+    res.send(Html.appProd()).end();
   }
 });
