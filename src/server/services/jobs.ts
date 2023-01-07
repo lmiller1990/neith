@@ -145,15 +145,15 @@ export function startScheduler() {
 
   const scheduler = scheduleJobs([
     {
-      runInMillis: 5000,
+      runInMillis: millisUntilNextDesginatedHour(DateTime.now(), 'Australia/Brisbane', 19),
       organizationId: 1,
       callback: () => {
         console.log("Running job!");
         return Promise.resolve();
       },
-      recurring: {
-        calculateNextExecutionMillis: () => 1000,
-      },
+      // recurring: {
+      //   calculateNextExecutionMillis: () => 0,
+      // },
     },
   ]);
 
