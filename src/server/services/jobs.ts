@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { schedule } from "../../../dbschema.js";
 import debugLib from "debug";
+import { sendEmail } from "./mailer.js";
 
 const debug = debugLib("server:services:jobs");
 
@@ -151,13 +152,14 @@ export function startScheduler() {
         19
       ),
       organizationId: 1,
-      callback: () => {
+      callback: async () => {
         console.log("Running job!");
+        await sendEmail("");
         return Promise.resolve();
       },
-      // recurring: {
-      //   calculateNextExecutionMillis: () => 0,
-      // },
+      recurring: {
+        calculateNextExecutionMillis: () => 1000 * 60 * 30,
+      },
     },
   ]);
 
