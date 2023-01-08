@@ -16,6 +16,9 @@ import { auth } from "./controllers/auth.js";
 import { requiresAuth } from "./middleware/requiresAuth.js";
 import { createContext, trpc } from "./controllers/trpc.js";
 import { startScheduler } from "./services/jobs.js";
+import debugLib from "debug";
+
+const debug = debugLib("server:express");
 
 declare global {
   namespace Express {
@@ -55,7 +58,7 @@ app.use(auth);
 
 if (process.env.NODE_ENV === "production") {
   app.get<{ id: string }>("/assets/:id", async (req, res) => {
-    req.params.id;
+    debug("serving asset %s", req.params.id);
     const assetPath = path.join(
       __dirname,
       "..",
