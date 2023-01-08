@@ -53,10 +53,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use(html);
 app.use(auth);
 
-app.get("/app/*", (_req, res) => {
-  res.redirect("/app");
-});
-
 if (process.env.NODE_ENV === "production") {
   app.get<{ id: string }>("/assets/:id", async (req, res) => {
     req.params.id;
