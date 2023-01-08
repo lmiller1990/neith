@@ -63,4 +63,4 @@ testMigration("20221220105733_addOrganizationTable", (verify) => {
 ## Deployment
 
 - Build the server and frontend with `npm run build`.
-- To start the server, `cd src/server` and run `NODE_ENV=production POSTGRES_USER=<user> POSTGRES_PASSWORD=<password node express.js`.
+- To start the server, `cd src/server` and run `NODE_ENV=production POSTGRES_USER=<user> POSTGRES_PASSWORD=<password> EMAIL_USER=<user> EMAIL_PASSWORD=<password> node express.js`.
