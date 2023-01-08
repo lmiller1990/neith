@@ -149,11 +149,11 @@ export function startScheduler() {
       runInMillis: millisUntilNextDesginatedHour(
         DateTime.now(),
         "Australia/Brisbane",
-        19
+        1
       ),
       organizationId: 1,
       callback: async () => {
-        console.log("Running job!");
+        debug("Running job!");
         await sendEmail("");
         return Promise.resolve();
       },

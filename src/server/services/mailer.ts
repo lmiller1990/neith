@@ -1,4 +1,7 @@
 import nodemailer from "nodemailer";
+import debugLib from "debug";
+
+const debug = debugLib("server:services:mailer");
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
@@ -13,6 +16,7 @@ const transporter = nodemailer.createTransport({
 
 export function sendEmail(content: string) {
   const d = new Date();
+  debug("Sending email at %s", d.toISOString());
   return transporter.sendMail({
     to: "hello@neith.dev",
     from: "no-reply@neith.dev",
