@@ -25,12 +25,12 @@ export const Organization = {
   notificationEmailContent(notifyPayload: NotifyPayload) {
     const data = notify(notifyPayload);
     const moduleInfo = data.map((info) => {
-      return `${info.name}: ${info.previousVersion} -> ${info.currentVersion}\n`;
+      return `${info.name}: ${info.previousVersion.version} -> ${info.currentVersion.version}\n`;
     });
 
     const msg = moduleInfo.length
       ? `the following packages received updates: \n\n${moduleInfo}`
-      : "none of the packages you are subscribed to have a new release";
+      : "none of the packages you are subscribed to have a new release.\n";
 
     return dedent`
       Hi,
@@ -40,7 +40,6 @@ export const Organization = {
       } update for your packages from neith.dev.
 
       In the last ${notifyPayload.schedule === "daily" ? "day" : "week"}, ${msg}
-
       - the neith.dev team.
     `;
   },
