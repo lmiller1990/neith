@@ -1,14 +1,8 @@
 import { Knex } from "knex";
-import {
-  Emails,
-  Jobs,
-  Modules,
-  notify_when,
-  Organizations,
-  schedule,
-} from "../../../dbschema.js";
+import dedent from "dedent";
+import { Emails, Jobs, Organizations, schedule } from "../../../dbschema.js";
 import debugLib from "debug";
-import { update } from "cypress/types/lodash/index.js";
+import { notify, NotifyPayload } from "../../notify.js";
 
 const debug = debugLib("server:models:organization");
 
@@ -17,6 +11,29 @@ interface NotificationSettings {
 }
 
 export const Organization = {
+  notificationEmailContent(notifyPayload: NotifyPayload) {
+    const data = notify(notifyPayload);
+    const moduleInfo = data.map((info) => {
+      return `${info.name}: ${info.previousVersion} -> ${info.currentVersion}\n`;
+    });
+
+    const msg = moduleInfo.length
+      ? `the following packages received updates: \n\n${moduleInfo}`
+      : "none of the packages you are subscribed to have a new release";
+
+    return dedent`
+      Hi,
+
+      This your ${
+        notifyPayload.schedule
+      } update for your packages from neith.dev.
+
+      In the last ${notifyPayload.schedule === "daily" ? "day" : "week"}, ${msg}
+
+      - the neith.dev team.
+    `;
+  },
+
   async getOrganizationById(
     db: Knex,
     options: { organizationId: number }

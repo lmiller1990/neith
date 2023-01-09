@@ -41,7 +41,7 @@ export async function isOpen() {
 export async function stopServer(): Promise<null> {
   const check = await isOpen();
   debug("stopping server %o", check);
-  if (check.open && check.pids.length) {
+  if (check.open && check.pids?.length) {
     const cmd: [string, string[]] = ["kill", ["-9", ...check.pids]];
     debug(`killing %i with cmd: %o`, check.pids, cmd);
     try {

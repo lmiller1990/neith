@@ -1,7 +1,7 @@
 import { execa } from "./utils.js";
 
 async function main() {
-  const whoami = await (await execa("whoami")).trim();
+  const whoami = (await execa("whoami")).trim();
 
   try {
     const pw = process.env.POSTGRES_PASSWORD

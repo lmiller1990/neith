@@ -3,14 +3,13 @@ import { notify_when, schedule } from "../dbschema.js";
 import { DateTime } from "luxon";
 import semver from "semver";
 
-interface NotifyModule {
+export interface NotifyModule {
   npmInfo: Pick<ModuleInfo, "name" | "time">;
   notifyWhen: notify_when;
 }
 
 export interface NotifyPayload {
   modules: NotifyModule[];
-  jobLastRun?: string;
   schedule: schedule;
   now: string;
 }

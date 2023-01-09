@@ -133,18 +133,18 @@ export interface Modules {
   id: number;
   organization_id: number;
   module_name: string;
-  notify_when: notify_when | null;
+  notify_when: notify_when;
 }
 export interface ModulesInput {
   id?: number;
   organization_id: number;
   module_name: string;
-  notify_when?: notify_when | null;
+  notify_when: notify_when;
 }
 const modules = {
   tableName: "modules",
   columns: ["id", "organization_id", "module_name", "notify_when"],
-  requiredForInsert: ["organization_id", "module_name"],
+  requiredForInsert: ["organization_id", "module_name", "notify_when"],
   primaryKey: "id",
   foreignKeys: {
     organization_id: {

@@ -19,14 +19,17 @@ export interface NpmPkg {
 }
 
 export const Registry = {
-  async fetchPackage(pkg: string): Promise<NpmPkg> {
+  async fetchFromRegistry(pkg: string) {
     const res = await fetch(`${NPM}/${pkg}`, {
       headers: {
         "Content-Type": "application/json",
       },
     });
-    const result = (await res.json()) as unknown as ModuleInfo;
+    return (await res.json()) as unknown as ModuleInfo;
+  },
 
+  async fetchPackage(pkg: string): Promise<NpmPkg> {
+    const result = await this.fetchFromRegistry(pkg);
     const tags = Object.entries(result["dist-tags"])
       .map(([name, tag]) => ({
         name,

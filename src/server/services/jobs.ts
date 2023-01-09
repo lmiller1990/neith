@@ -1,7 +1,12 @@
 import { DateTime } from "luxon";
 import { schedule } from "../../../dbschema.js";
+import { NotifyModule, NotifyPayload } from "../../notify.js";
 import debugLib from "debug";
-import { sendEmail } from "./mailer.js";
+import { Mailer } from "./mailer.js";
+import { Package } from "../models/package.js";
+import { Knex } from "knex";
+import { Organization } from "../models/organization.js";
+import { Registry } from "../models/registry.js";
 
 const debug = debugLib("server:services:jobs");
 
@@ -133,35 +138,84 @@ class Scheduler {
 
 const scheduler = new Scheduler();
 
-export function scheduleJobs(jobs: JobToRun[]) {
-  for (const job of jobs) {
-    scheduler.schedule(job);
-  }
+export function scheduleJob(job: JobToRun) {
+  scheduler.schedule(job);
 
   return scheduler;
 }
 
-export function startScheduler() {
+interface OrganizationJob {
+  db: Knex;
+  timezone: string;
+  organizationId: number;
+  schedule: schedule;
+}
+
+const DESIGNATED_HOUR = 9;
+
+export async function fetchOrganizationModules(
+  db: Knex,
+  options: { organizationId: number }
+): Promise<NotifyModule[]> {
+  const pkgs = await Package.getModulesForOrganization(db, options);
+
+  const npmInfo = await Promise.all(
+    pkgs.map(async (x) => {
+      const info = await Registry.fetchFromRegistry(x.module_name);
+      return {
+        npmInfo: info,
+        name: x.module_name,
+        notifyWhen: x.notify_when,
+      };
+    })
+  );
+
+  return npmInfo;
+}
+
+export function startScheduler(db: Knex, jobs: OrganizationJob[]) {
   debug("Starting scheduler...");
 
-  const scheduler = scheduleJobs([
-    {
+  for (const job of jobs) {
+    scheduleJob({
       runInMillis: millisUntilNextDesginatedHour(
         DateTime.now(),
-        "Australia/Brisbane",
-        1
+        job.timezone,
+        DESIGNATED_HOUR
       ),
-      organizationId: 1,
+      organizationId: job.organizationId,
       callback: async () => {
-        debug("Running job!");
-        await sendEmail("");
-        return Promise.resolve();
+        debug("Running job for organization_id: %s", job.organizationId);
+
+        const payload: NotifyPayload = {
+          modules: await fetchOrganizationModules(db, {
+            organizationId: job.organizationId,
+          }),
+          schedule: job.schedule,
+          now: DateTime.now().toISO(),
+        };
+
+        const emailData = Organization.notificationEmailContent(payload);
+        await Mailer.sendEmail(emailData);
       },
       recurring: {
-        calculateNextExecutionMillis: () => 1000 * 60 * 30,
-      },
-    },
-  ]);
+        calculateNextExecutionMillis: () => {
+          if (job.schedule === "daily") {
+            return millisUntilNextDesginatedHour(
+              DateTime.now(),
+              job.timezone,
+              DESIGNATED_HOUR
+            );
+          }
 
-  return scheduler;
+          // must be weekly, the default
+          return millisUntilNextMondayAtHours(
+            DateTime.now(),
+            job.timezone,
+            DESIGNATED_HOUR
+          );
+        },
+      },
+    });
+  }
 }

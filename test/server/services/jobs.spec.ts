@@ -5,7 +5,7 @@ import {
   Job,
   millisUntilNextDesginatedHour,
   millisUntilNextMondayAtHours,
-  scheduleJobs,
+  scheduleJob,
 } from "../../../src/server/services/jobs.js";
 
 function toHuman(ms: number) {
@@ -242,7 +242,7 @@ describe("millisUntilNextMondayAtHours", () => {
   });
 });
 
-describe("scheduleJobs", () => {
+describe("scheduleJob", () => {
   it("schedules and runs job", () =>
     new Promise<void>((done) => {
       let i = 0;
@@ -251,14 +251,12 @@ describe("scheduleJobs", () => {
       let complete = false;
       const doneCallback = () => (complete = true);
 
-      const scheduler = scheduleJobs([
-        {
-          runInMillis: 1000,
-          organizationId: 1,
-          callback: inc,
-          doneCallback,
-        },
-      ]);
+      const scheduler = scheduleJob({
+        runInMillis: 1000,
+        organizationId: 1,
+        callback: inc,
+        doneCallback,
+      });
 
       global.setTimeout(() => {
         expect(complete).toBe(true);
@@ -277,16 +275,14 @@ describe("scheduleJobs", () => {
         return Promise.resolve(i === 1 ? true : false);
       };
 
-      const scheduler = scheduleJobs([
-        {
-          runInMillis: 500,
-          organizationId: 1,
-          callback: inc,
-          recurring: {
-            calculateNextExecutionMillis: () => 500,
-          },
+      const scheduler = scheduleJob({
+        runInMillis: 500,
+        organizationId: 1,
+        callback: inc,
+        recurring: {
+          calculateNextExecutionMillis: () => 500,
         },
-      ]);
+      });
 
       global.setTimeout(() => {
         expect(i).toBe(1);
