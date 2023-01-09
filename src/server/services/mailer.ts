@@ -15,14 +15,14 @@ const transporter = nodemailer.createTransport({
 });
 
 export const Mailer = {
-  sendEmail(content: string) {
+  sendEmail(text: string) {
     const d = new Date();
     debug("Sending email at %s", d.toISOString());
     return transporter.sendMail({
       to: "hello@neith.dev",
       from: "hello@neith.dev",
       subject: "Testing the dep notifier app!",
-      text: `Hi! This email was sent at #toISOString: ${d.toISOString()}. #toLocaleString: ${d.toLocaleString()}`,
+      text,
     });
   },
 };
