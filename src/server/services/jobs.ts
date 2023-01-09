@@ -173,8 +173,12 @@ export async function fetchOrganizationModules(
   return npmInfo;
 }
 
-export function startScheduler(db: Knex, jobs: OrganizationJob[]) {
+export async function startScheduler(db: Knex) {
   debug("Starting scheduler...");
+
+  const jobs = await Organization.getAllWithJobs(db);
+
+  debug("starting jobs %s", JSON.stringify(jobs, null, 2));
 
   for (const job of jobs) {
     scheduleJob({
@@ -183,15 +187,15 @@ export function startScheduler(db: Knex, jobs: OrganizationJob[]) {
         job.timezone,
         DESIGNATED_HOUR
       ),
-      organizationId: job.organizationId,
+      organizationId: job.organization_id,
       callback: async () => {
-        debug("Running job for organization_id: %s", job.organizationId);
+        debug("Running job for organization_id: %s", job.organization_id);
 
         const payload: NotifyPayload = {
           modules: await fetchOrganizationModules(db, {
-            organizationId: job.organizationId,
+            organizationId: job.organization_id,
           }),
-          schedule: job.schedule,
+          schedule: job.job_schedule,
           now: DateTime.now().toISO(),
         };
 
@@ -200,7 +204,7 @@ export function startScheduler(db: Knex, jobs: OrganizationJob[]) {
       },
       recurring: {
         calculateNextExecutionMillis: () => {
-          if (job.schedule === "daily") {
+          if (job.job_schedule === "daily") {
             return millisUntilNextDesginatedHour(
               DateTime.now(),
               job.timezone,

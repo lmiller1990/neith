@@ -11,6 +11,17 @@ interface NotificationSettings {
 }
 
 export const Organization = {
+  async getAllWithJobs(db: Knex) {
+    const res = (await db("organizations").join(
+      "jobs",
+      "organizations.id",
+      "=",
+      "jobs.organization_id"
+    )) as Array<Organizations & Jobs>;
+
+    return res;
+  },
+
   notificationEmailContent(notifyPayload: NotifyPayload) {
     const data = notify(notifyPayload);
     const moduleInfo = data.map((info) => {

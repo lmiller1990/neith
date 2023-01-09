@@ -34,7 +34,7 @@ declare global {
 
 export const knexClient = knex(knexConfig);
 
-startScheduler();
+startScheduler(knexClient);
 
 const app = express();
 
