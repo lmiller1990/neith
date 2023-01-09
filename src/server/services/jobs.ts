@@ -162,6 +162,8 @@ export async function fetchOrganizationModules(
   const npmInfo = await Promise.all(
     pkgs.map(async (x) => {
       const info = await Registry.fetchFromRegistry(x.module_name);
+      delete info.time['created']
+      delete info.time['modified']
       return {
         npmInfo: info,
         name: x.module_name,
