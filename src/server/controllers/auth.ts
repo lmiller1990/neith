@@ -23,7 +23,7 @@ auth.post("/sign_out", async (req, res) => {
   debug("signing out id: %s", req.session.organizationId);
 
   res.cookie(Session.COOKIE_ID, "", { httpOnly: true });
-  res.redirect("/")
+  res.redirect("/");
 });
 
 auth.post<{}, {}, { email: string; password: string }>(

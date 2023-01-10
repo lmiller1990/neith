@@ -71,7 +71,7 @@ const savePackageMutation = useMutation({
     </div>
 
     <div class="flex justify-end">
-      <Button :disabled="loading">Submit</Button>
+      <Button :disabled="loading || !pkgName || !pkg">Submit</Button>
     </div>
   </form>
 </template>

@@ -22,12 +22,29 @@ const modal = useModal();
     <div class="flex justify-end mb-2">
       <Button @click="modal.showModal('dependenciesForm')">Add</Button>
     </div>
-    <div
-      v-for="pkg of depsQuery.data.value"
-      :key="pkg.name"
-      class="flex flex-col mb-4"
-    >
-      <PkgInfo :pkg="pkg" />
-    </div>
+    <template v-if="depsQuery.data.value?.length">
+      <div
+        v-for="pkg of depsQuery.data.value"
+        :key="pkg.name"
+        class="flex flex-col mb-4"
+      >
+        <PkgInfo :pkg="pkg" />
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="text-center my-8">
+        <p class="py-1">You aren't currently tracking and dependencies.</p>
+        <p>
+          Click
+          <a
+            @click="modal.showModal('dependenciesForm')"
+            class="underline cursor-pointer"
+            >here</a
+          >
+          to add one.
+        </p>
+      </div>
+    </template>
   </div>
 </template>

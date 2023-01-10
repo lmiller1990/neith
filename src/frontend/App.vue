@@ -45,7 +45,7 @@ const route = useRoute();
   </div>
 
   <div class="flex items-center flex-col">
-    <h1 class="uppercase my-8 text-5xl text-fuchsia-600">Dep Watch</h1>
+    <h1 class="uppercase my-8 text-5xl text-fuchsia-600">Neith</h1>
     <div class="flex justify-center">
       <div class="w-52 mr-4">
         <SideMenu :items="items" :selected="route.name?.toString()" />
