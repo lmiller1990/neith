@@ -34,6 +34,7 @@ export async function sessionMiddleware(
       id: session.id,
       organizationId: parseInt(session.organization_id, 10),
     };
+    res.locals.organizationId = session.organization_id
     return next();
   }
 

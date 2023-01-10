@@ -15,6 +15,17 @@ auth.get("/sign_in", (req, res) => {
   res.render("sign_in");
 });
 
+auth.post("/sign_out", async (req, res) => {
+  if (!req.session.organizationId) {
+    return res.redirect("/");
+  }
+
+  debug("signing out id: %s", req.session.organizationId);
+
+  res.cookie(Session.COOKIE_ID, "", { httpOnly: true });
+  res.redirect("/")
+});
+
 auth.post<{}, {}, { email: string; password: string }>(
   "/sign_in",
   async (req, res) => {

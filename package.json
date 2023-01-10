@@ -51,7 +51,7 @@
   },
   "scripts": {
     "vite:dev": "vite src/frontend",
-    "server": "NODE_ENV=development POSTGRES_DB=notifier_test node --loader ts-node/esm/transpile-only ./src/server/express.ts",
+    "server": "NODE_ENV=development POSTGRES_DB=notifier_test npx ts-node-esm --transpile-only --project src/server/tsconfig.json ./src/server/express.ts",
     "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest",
     "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
     "db:down": "POSTGRES_DB=notifier_test knex migrate:down",

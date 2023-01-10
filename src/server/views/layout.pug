@@ -2,4 +2,11 @@ html
   head
     title Dependency Notifier
   body
+    if locals.organizationId
+      form(method="POST" action="/sign_out")
+        button Sign Out
+    else 
+      a(href="/sign_in") Sign In
+      a(href="/sign_up") Sign Up
+
     block content
