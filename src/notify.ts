@@ -63,6 +63,14 @@ export function shouldNotify(
       return ["major", "minor"].includes(diff);
     }
 
+    case "prerelease": {
+      const diffs: semver.ReleaseType[] = [
+        "premajor",
+        "prerelease"
+      ]
+      return diffs.includes(diff)
+    }
+
     default: {
       throw Error(`${notifyWhen} is not implemented!`);
     }

@@ -82,7 +82,6 @@ describe("notify", () => {
               notifyWhen: "major",
             },
           ],
-          jobLastRun: undefined,
           now: "2022-12-27T15:00:00.000Z",
           schedule: "weekly",
         };
@@ -118,7 +117,6 @@ describe("notify", () => {
               notifyWhen: "major",
             },
           ],
-          jobLastRun: undefined,
           now: "2022-12-27T15:00:00.000Z",
           schedule: "weekly",
         };
@@ -145,7 +143,6 @@ describe("notify", () => {
               notifyWhen: "major",
             },
           ],
-          jobLastRun: undefined,
           now: "2022-12-26T15:00:00.000Z",
           schedule: "daily",
         };
@@ -185,7 +182,6 @@ describe("notify", () => {
             notifyWhen: "minor",
           },
         ],
-        jobLastRun: undefined,
         now: "2022-12-26T15:00:00.000Z",
         schedule: "daily",
       };
@@ -224,7 +220,6 @@ describe("notify", () => {
             notifyWhen: "minor",
           },
         ],
-        jobLastRun: undefined,
         now: "2022-12-26T15:00:00.000Z",
         schedule: "daily",
       };
@@ -240,6 +235,116 @@ describe("notify", () => {
           },
           currentVersion: {
             version: "1.0.0",
+            published: "2022-12-25T15:00:00.000Z",
+          },
+        },
+      ]);
+    });
+  });
+
+  describe("pre-release release", () => {
+    it("returns when version is updated to alpha/beta/release-candiate version", () => {
+      const payload: NotifyPayload = {
+        modules: [
+          {
+            npmInfo: {
+              name: "vite",
+              time: {
+                "0.8.0": "2022-12-16T15:00:00.000Z",
+                "1.0.0": "2022-12-24T15:00:00.000Z",
+                "2.0.0-alpha.0": "2022-12-25T15:00:00.000Z",
+              },
+            },
+            notifyWhen: "prerelease",
+          },
+        ],
+        now: "2022-12-26T15:00:00.000Z",
+        schedule: "daily",
+      };
+
+      const result = notify(payload);
+
+      expect(result).toEqual([
+        {
+          name: "vite",
+          previousVersion: {
+            version: "1.0.0",
+            published: "2022-12-24T15:00:00.000Z",
+          },
+          currentVersion: {
+            version: "2.0.0-alpha.0",
+            published: "2022-12-25T15:00:00.000Z",
+          },
+        },
+      ]);
+    });
+
+    it("returns when version is updated to alpha -> beta", () => {
+      const payload: NotifyPayload = {
+        modules: [
+          {
+            npmInfo: {
+              name: "vite",
+              time: {
+                "0.8.0": "2022-12-16T15:00:00.000Z",
+                "2.0.0-alpha.0": "2022-12-24T15:00:00.000Z",
+                "2.0.0-beta.0": "2022-12-25T15:00:00.000Z",
+              },
+            },
+            notifyWhen: "prerelease",
+          },
+        ],
+        now: "2022-12-26T15:00:00.000Z",
+        schedule: "daily",
+      };
+
+      const result = notify(payload);
+
+      expect(result).toEqual([
+        {
+          name: "vite",
+          previousVersion: {
+            version: "2.0.0-alpha.0",
+            published: "2022-12-24T15:00:00.000Z",
+          },
+          currentVersion: {
+            version: "2.0.0-beta.0",
+            published: "2022-12-25T15:00:00.000Z",
+          },
+        },
+      ]);
+    });
+
+    it("returns when version is updated to rc -> major", () => {
+      const payload: NotifyPayload = {
+        modules: [
+          {
+            npmInfo: {
+              name: "vite",
+              time: {
+                "0.8.0": "2022-12-16T15:00:00.000Z",
+                "2.0.0-release-candidate.0": "2022-12-24T15:00:00.000Z",
+                "2.0.0": "2022-12-25T15:00:00.000Z",
+              },
+            },
+            notifyWhen: "prerelease",
+          },
+        ],
+        now: "2022-12-26T15:00:00.000Z",
+        schedule: "daily",
+      };
+
+      const result = notify(payload);
+
+      expect(result).toEqual([
+        {
+          name: "vite",
+          previousVersion: {
+            version: "2.0.0-release-candidate.0",
+            published: "2022-12-24T15:00:00.000Z",
+          },
+          currentVersion: {
+            version: "2.0.0",
             published: "2022-12-25T15:00:00.000Z",
           },
         },
