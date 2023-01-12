@@ -14,6 +14,21 @@ export const Package = {
     });
   },
 
+  async delete(
+    db: Knex,
+    options: {
+      organizationId: number;
+      moduleName: string;
+    }
+  ): Promise<void> {
+    return db("modules")
+      .where({
+        module_name: options.moduleName,
+        organization_id: options.organizationId,
+      })
+      .delete();
+  },
+
   async saveModuleForOrganization(
     db: Knex,
     options: {

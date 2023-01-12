@@ -28,7 +28,10 @@ export const trpc = t.router({
     });
 
     return Promise.all(
-      pkgs.map((pkg) => Registry.fetchPackage(pkg.module_name))
+      pkgs.map(async (pkg) => ({
+        ...(await Registry.fetchPackage(pkg.module_name)),
+        notifyWhen: pkg.notify_when,
+      }))
     );
   }),
 
@@ -103,6 +106,15 @@ export const trpc = t.router({
         name: req.input.name,
         notify: req.input.frequency,
         organizationId: req.ctx.req.session.organizationId,
+      });
+    }),
+
+  deleteDependency: t.procedure
+    .input((obj) => obj as string)
+    .mutation(async (req) => {
+      return Package.delete(req.ctx.req.db, {
+        moduleName: req.input,
+        organizationId: req.ctx.req.session.organizationId!,
       });
     }),
 

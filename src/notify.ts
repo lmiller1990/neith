@@ -64,11 +64,8 @@ export function shouldNotify(
     }
 
     case "prerelease": {
-      const diffs: semver.ReleaseType[] = [
-        "premajor",
-        "prerelease"
-      ]
-      return diffs.includes(diff)
+      const diffs: semver.ReleaseType[] = ["premajor", "prerelease"];
+      return diffs.includes(diff);
     }
 
     default: {

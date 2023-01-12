@@ -3,7 +3,8 @@ import PkgInfo from "../components/PkgInfo.vue";
 import Button from "../components/Button.vue";
 import { trpc } from "../trpc.js";
 import { useModal } from "../composables/modal.js";
-import { useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import TrashIcon from "../components/TrashIcon.vue";
 
 export type Modules = Awaited<
   ReturnType<typeof trpc["getOrganizationModules"]["query"]>
@@ -12,6 +13,15 @@ export type Modules = Awaited<
 const depsQuery = useQuery({
   queryKey: ["dependencies"],
   queryFn: () => trpc.getOrganizationModules.query(),
+});
+
+const queryClient = useQueryClient();
+
+const deleteDependency = useMutation({
+  mutationFn: trpc.deleteDependency.mutate,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["dependencies"] });
+  },
 });
 
 const modal = useModal();
@@ -28,7 +38,19 @@ const modal = useModal();
         :key="pkg.name"
         class="flex flex-col mb-4"
       >
-        <PkgInfo :pkg="pkg" />
+        <PkgInfo :pkg="pkg">
+          <template #info>
+            <span class="mr-2 text-gray-500 text-sm">
+              {{ pkg.notifyWhen }}
+            </span>
+          </template>
+
+          <template #remove>
+            <button class="h-5 w-5" @click="deleteDependency.mutate(pkg.name)">
+              <TrashIcon class="fill-red-600 hover:fill-red-400" />
+            </button>
+          </template>
+        </PkgInfo>
       </div>
     </template>
 
