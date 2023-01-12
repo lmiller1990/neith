@@ -6,6 +6,7 @@ import { Job } from "../models/job.js";
 import { Organization } from "../models/organization.js";
 import { Package } from "../models/package.js";
 import { Registry } from "../models/registry.js";
+import { rescheduleJob } from "../services/jobs.js";
 
 export const createContext = ({ req, res }: CreateExpressContextOptions) => ({
   req,
@@ -109,11 +110,13 @@ export const trpc = t.router({
     .input((schedule) => {
       return schedule as schedule;
     })
-    .mutation((req) => {
-      return Job.updateJobScheduleForOrganization(req.ctx.req.db, {
+    .mutation(async (req) => {
+      await Job.updateJobScheduleForOrganization(req.ctx.req.db, {
         organizationId: req.ctx.req.session.organizationId!,
         jobSchedule: req.input,
       });
+
+      return rescheduleJob(req.ctx.req.db, req.ctx.req.session.organizationId!);
     }),
 
   getOrganization: t.procedure.query(async (req) => {
