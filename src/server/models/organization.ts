@@ -11,6 +11,14 @@ interface NotificationSettings {
 }
 
 export const Organization = {
+  async getJobWithOrg(db: Knex, options: { organizationId: number }) {
+    const res = (await db("organizations")
+      .join("jobs", "organizations.id", "=", "jobs.organization_id")
+      .first("jobs.organization_id", options.organizationId)) as Organizations &
+      Jobs;
+    return res;
+  },
+
   async getAllWithJobs(db: Knex) {
     const res = (await db("organizations").join(
       "jobs",

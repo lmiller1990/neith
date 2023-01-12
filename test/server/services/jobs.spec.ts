@@ -1,11 +1,9 @@
 import { DateTime } from "luxon";
 import { describe, expect, it } from "vitest";
 import {
-  deriveJobs,
-  Job,
   millisUntilNextDesginatedHour,
   millisUntilNextMondayAtHours,
-  scheduleJob,
+  Scheduler,
 } from "../../../src/server/services/jobs.js";
 
 function toHuman(ms: number) {
@@ -20,51 +18,6 @@ function toHuman(ms: number) {
     secs: secs,
   };
 }
-
-describe("deriveJobs", () => {
-  it("handles weekly job", () => {
-    let i = 0;
-    const inc = () => Promise.resolve(i++);
-    const jobs: Job[] = [
-      {
-        name: "job_one",
-        organizationId: 1,
-        timezone: "utc",
-        schedule: "weekly",
-        callback: inc,
-      },
-    ];
-
-    // 7th of Jan 2023 is a Saturday.
-    const now = DateTime.fromObject(
-      {
-        year: 2023,
-        month: 1,
-        day: 7,
-        hour: 9,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-      },
-      { zone: "utc" }
-    );
-
-    const actual = deriveJobs(now, jobs);
-
-    expect(actual).toMatchInlineSnapshot(`
-      [
-        {
-          "callback": [Function],
-          "name": "job_one",
-          "organizationId": 1,
-          "runInMillis": 172800000,
-          "schedule": "weekly",
-          "timezone": "utc",
-        },
-      ]
-    `);
-  });
-});
 
 describe("millisUntilNextDesginatedHour", () => {
   it("gets 9AM on the same day", () => {
@@ -242,41 +195,56 @@ describe("millisUntilNextMondayAtHours", () => {
   });
 });
 
-describe("scheduleJob", () => {
-  it("schedules and runs job", () =>
-    new Promise<void>((done) => {
+describe("Scheduler", () => {
+  it("clears and re-schdeduls job", () => {
+    const scheduler = new Scheduler();
+
+    return new Promise<void>((done) => {
       let i = 0;
-      const inc = () => Promise.resolve(i++);
+      const inc = () => {
+        i++;
+        return Promise.resolve(true);
+      };
 
-      let complete = false;
-      const doneCallback = () => (complete = true);
-
-      const scheduler = scheduleJob({
-        runInMillis: 1000,
+      scheduler.schedule({
+        calcMillisUntilExecution: () => 1000,
         organizationId: 1,
         callback: inc,
-        doneCallback,
       });
 
       global.setTimeout(() => {
-        expect(complete).toBe(true);
-        expect(i).toBe(1);
-        // does not reschedule
-        expect(Array.from(scheduler.jobs.keys()).length).toBe(0);
-        done();
-      }, 1500);
-    }));
+        scheduler.clearSchedule(1);
+        scheduler.schedule({
+          calcMillisUntilExecution: () => 1000,
+          organizationId: 1,
+          callback: inc,
+        });
+      }, 500);
 
-  it("reschedules job", () =>
-    new Promise<void>((done) => {
+      global.setTimeout(() => {
+        expect(i).toBe(0);
+      }, 1200);
+
+      global.setTimeout(() => {
+        expect(i).toBe(1);
+        expect(Array.from(scheduler.jobs.keys()).length).toBe(0);
+        expect(scheduler.jobs).toMatchInlineSnapshot("Map {}");
+        done();
+      }, 1700);
+    });
+  });
+
+  it("re-queues job for execution", () => {
+    const scheduler = new Scheduler();
+    return new Promise<void>((done) => {
       let i = 0;
       const inc = () => {
         i++;
         return Promise.resolve(i === 1 ? true : false);
       };
 
-      const scheduler = scheduleJob({
-        runInMillis: 500,
+      scheduler.schedule({
+        calcMillisUntilExecution: () => 500,
         organizationId: 1,
         callback: inc,
         recurring: {
@@ -290,8 +258,10 @@ describe("scheduleJob", () => {
 
       global.setTimeout(() => {
         expect(i).toBe(2);
+        expect(Array.from(scheduler.jobs.keys()).length).toBe(0);
         expect(scheduler.jobs).toMatchInlineSnapshot("Map {}");
         done();
       }, 1200);
-    }));
+    });
+  });
 });

@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { schedule } from "../../../dbschema.js";
+import { Jobs, Organizations, schedule } from "../../../dbschema.js";
 import { NotifyModule, NotifyPayload } from "../../notify.js";
 import debugLib from "debug";
 import { Mailer } from "./mailer.js";
@@ -9,6 +9,8 @@ import { Organization } from "../models/organization.js";
 import { Registry } from "../models/registry.js";
 
 const debug = debugLib("server:services:jobs");
+
+const DESIGNATED_HOUR = 9;
 
 /**
  * Get a list of all jobs and the next scheduled date.
@@ -25,7 +27,7 @@ export interface Job {
 export function millisUntilNextDesginatedHour(
   now: DateTime,
   timezone: string,
-  hour = 9
+  hour = DESIGNATED_HOUR
 ) {
   let d = now.setZone(timezone);
 
@@ -48,7 +50,7 @@ export function millisUntilNextDesginatedHour(
 export function millisUntilNextMondayAtHours(
   now: DateTime,
   timezone: string,
-  hours = 9
+  hours = DESIGNATED_HOUR
 ) {
   const monday = 1;
   let d = now.setZone(timezone);
@@ -71,7 +73,7 @@ interface JobToRun {
   /**
    * Number of milliseconds until this job should execute.
    */
-  runInMillis: number;
+  calcMillisUntilExecution: () => number;
 
   /**
    * Organization that job belongs to.
@@ -102,35 +104,42 @@ interface JobToRun {
   };
 }
 
-export function deriveJobs(now: DateTime, jobs: Job[]): JobToRun[] {
-  return jobs.map((job) => {
-    const runInMillis = millisUntilNextMondayAtHours(now, job.timezone);
-    return {
-      ...job,
-      runInMillis,
-    };
-  });
-}
-
-class Scheduler {
+export class Scheduler {
   #jobs = new Map<number, NodeJS.Timeout>();
 
   get jobs() {
     return this.#jobs;
   }
 
+  clearSchedule(organizationId: number) {
+    const id = this.#jobs.get(organizationId);
+    if (!id) {
+      debug(
+        "tried clearing job with organization_id %s but one does not exist.",
+        organizationId
+      );
+      return;
+    }
+
+    global.clearTimeout(id);
+    this.#jobs.delete(organizationId);
+  }
+
   schedule(jobToRun: JobToRun) {
     const timeoutID = global.setTimeout(async () => {
       const repeat = await jobToRun.callback();
       jobToRun.doneCallback?.();
+
       this.#jobs.delete(jobToRun.organizationId);
+
       if (repeat !== false && jobToRun.recurring) {
         this.schedule({
           ...jobToRun,
-          runInMillis: jobToRun.recurring.calculateNextExecutionMillis(),
+          calcMillisUntilExecution:
+            jobToRun.recurring.calculateNextExecutionMillis,
         });
       }
-    }, jobToRun.runInMillis);
+    }, jobToRun.calcMillisUntilExecution());
 
     this.#jobs.set(jobToRun.organizationId, timeoutID);
   }
@@ -138,20 +147,46 @@ class Scheduler {
 
 const scheduler = new Scheduler();
 
-export function scheduleJob(job: JobToRun) {
-  scheduler.schedule(job);
+export function scheduleJob(
+  job: Organizations & Jobs,
+  task: () => Promise<void>
+) {
+  const jobToRun: JobToRun = {
+    calcMillisUntilExecution: () =>
+      millisUntilNextDesginatedHour(
+        DateTime.now(),
+        job.timezone,
+        DESIGNATED_HOUR
+      ),
+
+    organizationId: job.organization_id,
+
+    callback: task,
+
+    recurring: {
+      calculateNextExecutionMillis: () => {
+        if (job.job_schedule === "daily") {
+          return millisUntilNextDesginatedHour(
+            DateTime.now(),
+            job.timezone,
+            DESIGNATED_HOUR
+          );
+        }
+
+        // must be weekly, the default
+        return millisUntilNextMondayAtHours(
+          DateTime.now(),
+          job.timezone,
+          DESIGNATED_HOUR
+        );
+      },
+    },
+  };
+
+  scheduler.schedule(jobToRun);
 
   return scheduler;
 }
-
-interface OrganizationJob {
-  db: Knex;
-  timezone: string;
-  organizationId: number;
-  schedule: schedule;
-}
-
-const DESIGNATED_HOUR = 9;
 
 export async function fetchOrganizationModules(
   db: Knex,
@@ -175,6 +210,29 @@ export async function fetchOrganizationModules(
   return npmInfo;
 }
 
+async function sendMail(db: Knex, job: Jobs & Organizations) {
+  debug("Running job for organization_id: %s", job.organization_id);
+
+  const payload: NotifyPayload = {
+    modules: await fetchOrganizationModules(db, {
+      organizationId: job.organization_id,
+    }),
+    schedule: job.job_schedule,
+    now: DateTime.now().toISO(),
+  };
+
+  const emailData = Organization.notificationEmailContent(payload);
+  debug("Sending email: %s", emailData);
+  await Mailer.sendEmail(emailData);
+}
+
+export async function rescheduleJob(db: Knex, organizationId: number) {
+  const job = await Organization.getJobWithOrg(db, { organizationId });
+  scheduler.clearSchedule(job.organization_id);
+
+  scheduleJob(job, () => sendMail(db, job));
+}
+
 export async function startScheduler(db: Knex) {
   debug("Starting scheduler...");
 
@@ -183,46 +241,6 @@ export async function startScheduler(db: Knex) {
   debug("starting jobs %s", JSON.stringify(jobs, null, 2));
 
   for (const job of jobs) {
-    scheduleJob({
-      runInMillis: millisUntilNextDesginatedHour(
-        DateTime.now(),
-        job.timezone,
-        DESIGNATED_HOUR
-      ),
-      organizationId: job.organization_id,
-      callback: async () => {
-        debug("Running job for organization_id: %s", job.organization_id);
-
-        const payload: NotifyPayload = {
-          modules: await fetchOrganizationModules(db, {
-            organizationId: job.organization_id,
-          }),
-          schedule: job.job_schedule,
-          now: DateTime.now().toISO(),
-        };
-
-        const emailData = Organization.notificationEmailContent(payload);
-        debug("Sending email: %s", emailData);
-        await Mailer.sendEmail(emailData);
-      },
-      recurring: {
-        calculateNextExecutionMillis: () => {
-          if (job.job_schedule === "daily") {
-            return millisUntilNextDesginatedHour(
-              DateTime.now(),
-              job.timezone,
-              DESIGNATED_HOUR
-            );
-          }
-
-          // must be weekly, the default
-          return millisUntilNextMondayAtHours(
-            DateTime.now(),
-            job.timezone,
-            DESIGNATED_HOUR
-          );
-        },
-      },
-    });
+    scheduleJob(job, () => sendMail(db, job));
   }
 }
