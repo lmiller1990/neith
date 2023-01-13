@@ -23,6 +23,7 @@
     "dedent": "^0.7.0",
     "execa": "^6.1.0",
     "express": "^4.18.2",
+    "gulp": "^4.0.2",
     "knex": "^2.3.0",
     "luxon": "^3.1.1",
     "node-fetch": "^3.3.0",
@@ -52,6 +53,7 @@
   "scripts": {
     "vite:dev": "vite src/frontend",
     "server": "NODE_ENV=development POSTGRES_DB=notifier_test npx ts-node-esm --transpile-only --project src/server/tsconfig.json ./src/server/express.ts",
+    "build:server:tailwind": "npx tailwindcss -i ./src/server/tailwind.css --config ./tailwind.server.config.cjs -o ./src/server/style.css",
     "db:migrate": "POSTGRES_DB=notifier_test knex migrate:latest",
     "db:rollback": "POSTGRES_DB=notifier_test knex migrate:rollback",
     "db:down": "POSTGRES_DB=notifier_test knex migrate:down",
@@ -63,7 +65,7 @@
     "test:unit": "vitest --run",
     "test:component": "cypress run --component",
     "lint": "prettier --write .",
-    "build:server": "tsc --project src/server",
+    "build:server": "tsc --project src/server && npm run build:server:tailwind",
     "build:frontend": "vite build src/frontend",
     "build": "npm run build:server && npm run build:frontend",
     "clean": "rm -rf src/*.js && rm -rf src/**/*.js && rm -rf src/frontend/dist"

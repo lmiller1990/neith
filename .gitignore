@@ -3,3 +3,4 @@ videos
 db_erd.svg
 src/**/*.js
 dist
+src/server/style.css

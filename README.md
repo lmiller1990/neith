@@ -26,6 +26,14 @@ The schema is managed with [knex](https://knexjs.org).
 - Update `knexfile.js` with your credentials.
 - Run `npm run db:migrate` to run the migrations.
 
+## Development
+
+The development process is managed by [Gulp](https://gulpjs.com/). You only need to run `npx gulp dev` to get started. You may need some environment variables, depending on how you configured your database, etc:
+
+```sh
+NODE_ENV=development POSTGRES_DB=notifier_test POSTGRES_PASSWORD=<password> POSTGRES_USER=lachlan npx gulp dev
+```
+
 ### Adding a Migration
 
 If you need to add a new table or modify an exist one, do so via a migration.
