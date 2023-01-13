@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
-import type { Emails, schedule } from "../../../dbschema.js";
-import { useDisableWhileExecuting } from "../composables/loading.js";
+import type { schedule } from "../../../dbschema.js";
 import Button from "../components/Button.vue";
 import Card from "../components/Card.vue";
 import TrashIcon from "../components/TrashIcon.vue";
-import { useModal } from "../composables/modal";
+import { useModal } from "../composables/modal.js";
 import { trpc } from "../trpc.js";
 import SlackCard from "./NotificationsPage/SlackCard.vue";
 
@@ -14,16 +13,11 @@ const frequency = ref<schedule>("weekly");
 
 const schedules: schedule[] = ["daily", "weekly"];
 
-const { loading, disableWhileRunning } = useDisableWhileExecuting();
 const modal = useModal();
-
-async function handleSaveFrequency() {
-  disableWhileRunning(() => trpc.saveFrequency.mutate(frequency.value));
-}
 
 const queryClient = useQueryClient();
 
-const frequencyQuery = useQuery({
+useQuery({
   queryKey: ["frequency"],
   queryFn: async () => {
     // TODO: How to use query cache as source of truth for inputs?
@@ -36,14 +30,10 @@ const frequencyQuery = useQuery({
 });
 
 const updateFrequency = useMutation({
-  mutationFn: trpc.saveFrequency.mutate,
+  mutationFn: (frequency: schedule) => trpc.saveFrequency.mutate(frequency),
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ["frequency"] });
   },
-});
-
-watch(frequency, (newVal) => {
-  updateFrequency.mutate(newVal);
 });
 
 const emailQuery = useQuery({
@@ -64,7 +54,10 @@ const deleteEmail = useMutation({
     <h2>Notification Frequency</h2>
     <p class="my-2">How often would you like to receive notifications?</p>
 
-    <form class="flex flex-col" @submit.prevent="handleSaveFrequency">
+    <form
+      class="flex flex-col"
+      @submit.prevent="updateFrequency.mutate(frequency)"
+    >
       <div class="flex" v-for="schedule of schedules" :key="schedule">
         <input
           class="mr-2"
@@ -77,7 +70,7 @@ const deleteEmail = useMutation({
       </div>
 
       <div class="flex justify-end">
-        <Button :disabled="loading">Save</Button>
+        <Button :disabled="updateFrequency.isLoading.value">Save</Button>
       </div>
     </form>
   </Card>

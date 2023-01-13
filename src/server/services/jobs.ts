@@ -155,17 +155,31 @@ export class Scheduler {
 
 const scheduler = new Scheduler();
 
+function calculateNextExecution(timezone: string, schedule: schedule): number {
+  if (schedule === "daily") {
+    return millisUntilNextDesginatedHour(
+      DateTime.now(),
+      timezone,
+      DESIGNATED_HOUR
+    );
+  }
+
+  // must be weekly, the default
+  return millisUntilNextMondayAtHours(
+    DateTime.now(),
+    timezone,
+    DESIGNATED_HOUR
+  );
+}
+
 export function scheduleJob(
   job: Organizations & Jobs,
   task: () => Promise<void>
 ) {
   const jobToRun: JobToRun = {
-    calcMillisUntilExecution: () =>
-      millisUntilNextDesginatedHour(
-        DateTime.now(),
-        job.timezone,
-        DESIGNATED_HOUR
-      ),
+    calcMillisUntilExecution: () => {
+      return calculateNextExecution(job.timezone, job.job_schedule);
+    },
 
     organizationId: job.organization_id,
 
@@ -173,20 +187,7 @@ export function scheduleJob(
 
     recurring: {
       calculateNextExecutionMillis: () => {
-        if (job.job_schedule === "daily") {
-          return millisUntilNextDesginatedHour(
-            DateTime.now(),
-            job.timezone,
-            DESIGNATED_HOUR
-          );
-        }
-
-        // must be weekly, the default
-        return millisUntilNextMondayAtHours(
-          DateTime.now(),
-          job.timezone,
-          DESIGNATED_HOUR
-        );
+        return calculateNextExecution(job.timezone, job.job_schedule);
       },
     },
   };
@@ -236,6 +237,7 @@ async function sendMail(db: Knex, job: Jobs & Organizations) {
 
 export async function rescheduleJob(db: Knex, organizationId: number) {
   const job = await Organization.getJobWithOrg(db, { organizationId });
+  debug("rescheduling job %o", job);
   scheduler.clearSchedule(job.organization_id);
 
   scheduleJob(job, () => sendMail(db, job));

@@ -1,12 +1,15 @@
 import { inferAsyncReturnType, initTRPC } from "@trpc/server";
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import assert from "node:assert";
+import debugLib from "debug";
 import { notify_when, Organizations, schedule } from "../../../dbschema.js";
 import { Job } from "../models/job.js";
 import { Organization } from "../models/organization.js";
 import { Package } from "../models/package.js";
 import { Registry } from "../models/registry.js";
 import { rescheduleJob } from "../services/jobs.js";
+
+const debug = debugLib("server:controllers:trpc");
 
 export const createContext = ({ req, res }: CreateExpressContextOptions) => ({
   req,
@@ -123,6 +126,7 @@ export const trpc = t.router({
       return schedule as schedule;
     })
     .mutation(async (req) => {
+      debug("updating frequency to %s", req.input);
       await Job.updateJobScheduleForOrganization(req.ctx.req.db, {
         organizationId: req.ctx.req.session.organizationId!,
         jobSchedule: req.input,
