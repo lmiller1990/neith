@@ -7,10 +7,11 @@ import { Package } from "../models/package.js";
 import { Knex } from "knex";
 import { Organization } from "../models/organization.js";
 import { Registry } from "../models/registry.js";
+import { toHuman } from "../utils.js";
 
 const debug = debugLib("server:services:jobs");
 
-const DESIGNATED_HOUR = 9;
+const DESIGNATED_HOUR = 11;
 
 /**
  * Get a list of all jobs and the next scheduled date.
@@ -126,6 +127,13 @@ export class Scheduler {
   }
 
   schedule(jobToRun: JobToRun) {
+    debug(
+      "time is now %s. Scheduling job to run in %s ms. That is in %o",
+      DateTime.now().toISO(),
+      jobToRun.calcMillisUntilExecution(),
+      toHuman(jobToRun.calcMillisUntilExecution())
+    );
+
     const timeoutID = global.setTimeout(async () => {
       const repeat = await jobToRun.callback();
       jobToRun.doneCallback?.();
@@ -211,7 +219,7 @@ export async function fetchOrganizationModules(
 }
 
 async function sendMail(db: Knex, job: Jobs & Organizations) {
-  debug("Running job for organization_id: %s", job.organization_id);
+  debug("Sending mail for organization_id: %s", job.organization_id);
 
   const payload: NotifyPayload = {
     modules: await fetchOrganizationModules(db, {

@@ -29,7 +29,8 @@ auth.post("/sign_out", async (req, res) => {
 auth.post<{}, {}, { email: string; password: string }>(
   "/sign_in",
   async (req, res) => {
-    debug("/sign_in: got req with body %o", req.body);
+    const { password, ...rest } = req.body;
+    debug("/sign_in: got req with body %o", rest);
     try {
       const organizationId = await User.signIn(
         req.db,
@@ -60,7 +61,8 @@ auth.post<
   {},
   { timezone: string; organization: string; email: string; password: string }
 >("/sign_up", async (req, res) => {
-  debug("/sign_up: got req with body %o", req.body);
+  const { password, ...rest } = req.body;
+  debug("/sign_up: got req with body %o", rest);
   try {
     const organizationId = await User.signUp(
       req.db,
