@@ -17,7 +17,7 @@ const modal = useModal();
 
 const queryClient = useQueryClient();
 
-useQuery({
+const frequencyQuery = useQuery({
   queryKey: ["frequency"],
   queryFn: async () => {
     // TODO: How to use query cache as source of truth for inputs?
@@ -50,7 +50,7 @@ const deleteEmail = useMutation({
 </script>
 
 <template>
-  <Card class="mb-4">
+  <Card class="mb-4" :loading="frequencyQuery.isLoading.value">
     <h2>Notification Frequency</h2>
     <p class="my-2">How often would you like to receive notifications?</p>
 
@@ -75,7 +75,10 @@ const deleteEmail = useMutation({
     </form>
   </Card>
 
-  <Card class="mb-4">
+  <Card
+    class="mb-4"
+    :loading="emailQuery.isLoading.value || deleteEmail.isLoading.value"
+  >
     <h2>Email Notifications</h2>
     <p class="my-2">Emails that receive notifications.</p>
 

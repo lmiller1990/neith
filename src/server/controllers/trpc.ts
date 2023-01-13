@@ -74,7 +74,7 @@ export const trpc = t.router({
     .input((value) => {
       return value as string;
     })
-    .mutation((req) => {
+    .mutation(async (req) => {
       assert(
         req.ctx.req.session.organizationId,
         `organizationId should be defined`

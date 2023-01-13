@@ -9,7 +9,7 @@ import { trpc } from "../../trpc.js";
 const workspace = ref("");
 const channel = ref("");
 
-useQuery({
+const slackQuery = useQuery({
   queryKey: ["organization"],
   queryFn: () => trpc.getOrganization.query(),
   onSuccess: (vals) => {
@@ -36,7 +36,11 @@ function handleUpdateOrg() {
 </script>
 
 <template>
-  <Card>
+  <Card
+    :loading="
+      slackQuery.isLoading.value || organizationMutation.isLoading.value
+    "
+  >
     <h2>Slack Notifications</h2>
     <p class="my-2">Configure Slack Push Notifications.</p>
 

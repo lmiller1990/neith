@@ -4,6 +4,7 @@ const props = defineProps<{
   label: string;
   modelValue: string;
   placeholder?: string;
+  type?: string;
 }>();
 
 const emit = defineEmits<{
@@ -23,6 +24,7 @@ function handleChange(event: Event) {
       :name="props.name"
       :id="props.name"
       :value="props.modelValue"
+      :type="props.type ?? 'text'"
       @input="handleChange"
       :placeholder="props.placeholder"
       class="border border-black rounded-md p-1 text-xl"

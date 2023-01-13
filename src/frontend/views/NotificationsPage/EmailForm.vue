@@ -29,9 +29,15 @@ async function handleSubmit() {
 
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col">
-    <Input name="email" v-model="email" label="Email" placeholder="" />
+    <Input
+      name="email"
+      type="email"
+      v-model="email"
+      label="Email"
+      placeholder=""
+    />
 
-    <div class="flex justify-end">
+    <div class="flex justify-end mt-2">
       <Button :disabled="addEmail.isLoading.value">Submit</Button>
     </div>
   </form>

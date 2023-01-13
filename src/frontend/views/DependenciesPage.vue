@@ -5,6 +5,7 @@ import { trpc } from "../trpc.js";
 import { useModal } from "../composables/modal.js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import TrashIcon from "../components/TrashIcon.vue";
+import Loader from "../components/Loader.vue";
 
 export type Modules = Awaited<
   ReturnType<typeof trpc["getOrganizationModules"]["query"]>
@@ -51,6 +52,12 @@ const modal = useModal();
             </button>
           </template>
         </PkgInfo>
+      </div>
+    </template>
+
+    <template v-else-if="depsQuery.isLoading.value">
+      <div class="m-4">
+        <Loader />
       </div>
     </template>
 
