@@ -32,7 +32,7 @@ const orgQuery = useQuery({
       <h2 class="text-center my-8 text-2xl font-semibold text-gray-400">
         US$0/year
       </h2>
-      <ul class="mt-2 h-32 list-tick list-item-sm">
+      <ul class="mt-2 h-32 list-tick font-sm">
         <li>Up to 5 users</li>
         <li>Monitor 5 packages</li>
         <li>Email Notifications</li>
@@ -46,15 +46,22 @@ const orgQuery = useQuery({
       <h2 class="text-center my-8 text-2xl font-semibold text-gray-400">
         US$19/year
       </h2>
-      <ul class="mt-2 h-32 list-tick list-item-sm">
+      <ul class="mt-2 h-32 list-tick font-sm">
         <li>Unlimited users</li>
         <li>Unlimited packages</li>
         <li>Email Notifications</li>
         <li>Push Notifications</li>
       </ul>
       <form class="w-100 text-center" action="/get_plan_business" method="POST">
-        <Button :disabled="loading">Get</Button>
+        <Button>Get</Button>
       </form>
     </Card>
   </div>
 </template>
+
+<style scoped>
+.list-tick li::before {
+  content: "✅";
+  margin-right: 0.25rem;
+}
+</style>

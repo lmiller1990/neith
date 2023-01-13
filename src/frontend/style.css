@@ -17,12 +17,3 @@ h2 {
 h3 {
   @apply font-bold text-lg;
 }
-
-.list-tick li::before {
-  content: "✅";
-  margin-right: 0.25rem;
-}
-
-.list-item-sm li {
-  font-size: small;
-}
