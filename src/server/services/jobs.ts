@@ -11,7 +11,7 @@ import { toHuman } from "../utils.js";
 
 const debug = debugLib("server:services:jobs");
 
-const DESIGNATED_HOUR = 11;
+const DESIGNATED_HOUR = 9;
 
 /**
  * Get a list of all jobs and the next scheduled date.
