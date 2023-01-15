@@ -19,12 +19,12 @@ block content
         div
           ul
             each val in ['tailwind', 'webpack', 'react']
-              li(class='shadow-lg bg-white rounded-lg mb-4 p-4 w-36 text-center text-lg')= val
+              li(class='shadow-lg bg-white rounded-lg mb-4 px-4 py-2 w-36 text-center text-lg')= val
         div(class='flex items-center my-6')
           div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 1 
           | Choose Packages
           
-      div(class='flex flex-col items-center')
+      div(class='flex flex-col items-center justify-between')
         ul(class='rounded-lg bg-white border border-fuchsia-500 overflow-hidden w-48')
           each val in ['prerelease', 'minor', 'major']
             li(class=`h-12 text-lg flex items-center justify-between px-4 ${val === 'major' ? 'bg-zinc-100' : ''}`)
@@ -35,7 +35,7 @@ block content
           div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 2 
           | Choose Release Type
 
-      div(class='flex flex-col items-center')
+      div(class='flex flex-col items-center justify-between')
         div(class='rounded-lg bg-white border border-fuchsia-500 overflow-hidden w-60 p-2')
           div(class='flex justify-between items-center')
             div(class='flex')
@@ -53,3 +53,9 @@ block content
         div(class='flex items-center my-6')
           div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 3 
           | Receive Updates
+
+  div(class="flex justify-center py-6 bg-white w-full")
+    section(class="max-w-3xl w-full text-xl")
+      p(class='my-4') Get started for #[a(href="/sign_up") free]...
+      p(class='my-4 ml-16') ... or explore our #[a(href="/") business plan]...
+      p(class='my-4 ml-32') ... or #[a(href="/") host your own]!
