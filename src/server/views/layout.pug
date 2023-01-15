@@ -6,13 +6,13 @@ html
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="../style.css")
   body(class='flex flex-col items-center')
-    header(class="flex justify-center py-6 bg-zinc-100 w-full")
-      div(class="max-w-3xl flex justify-between w-full")
-        h1(class="text-fuchsia-600 text-6xl") NEITH
-        div
-          button(class="secondary mx-2") Sign In
-          button(class="primary") Sign Up
-
+    header(class="flex justify-center md:py-6 bg-zinc-100 w-full")
+      div(class="max-w-3xl flex justify-between w-full p-4 md:p-0")
+        h1(class="text-fuchsia-600 text-3xl md:text-5xl") NEITH
+        div(class="flex items-center")
+          a(href="/sign_in" class="flex items-center justify-center md:bg-white text-fuchsia-600 md:p-2 md:rounded-md h-8 w-16 md:w-24 md:h-12 md:border-2 md:border-fuchsia-600 mx-2 hover:bg-fuchsia-100 border-0") Sign In
+          a(href="/sign_up" class="flex items-center justify-center hover:bg-fuchsia-500 text-white md:p-2 rounded-md h-8 w-16 md:w-24 md:h-12 bg-fuchsia-600") Sign Up
+  
       //- if locals.organizationId
       //-   a(href="/app/") Go to App
       //- else 
@@ -22,8 +22,8 @@ html
     block content
 
     footer(class="flex justify-center py-6 bg-zinc-100 w-full")
-      div(class="max-w-3xl flex justify-between items-end w-full")
-        h1(class="text-fuchsia-600 text-4xl") NEITH
+      div(class="max-w-3xl flex justify-between flex-col md:flex-row items-center md:items-end w-full")
+        h1(class="text-fuchsia-600 text-4xl mb-4 md:mb-0") NEITH
         div
           a(href="/" class='ml-4') Docs
           a(href="/" class='ml-4') GitHub

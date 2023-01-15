@@ -2,25 +2,25 @@ extends layout.pug
 
 block content
   div(class='flex items-center flex-col bg-zinc-100 w-full')
-    section(class='max-w-3xl')
-      h2(class='text-fuchsia-600 text-6xl my-12 leading-tight') Stay one step ahead of the JavaScript ecosystem.
+    section(class='max-w-3xl p-4 md:p-0')
+      h2(class='text-fuchsia-600 text-3xl md:text-6xl my-12 leading-tight') Stay one step ahead of the JavaScript ecosystem.
 
       p(class='text-3xl my-12 max-w-md leading-tight') Neith tracks your favorite npm packages and keeps you up to date with the latest releases.
 
   div(class="flex justify-center py-6 bg-white w-full")
-    section(class="max-w-3xl w-full text-xl")
+    section(class='max-w-3xl p-4 md:p-0 md:text-xl')
       p(class='my-4') A JavaScript project has hundreds of dependencies...
       p(class='my-4') ... at least, a small one. Yours more likely has thousands.
       p(class='my-4') Cut through the cruft and stay up to date with the most important packages in your project, and ensure technical debt doesn't hold you back.
 
   div(class='flex items-center flex-col bg-zinc-100 w-full py-12')
-    section(class='max-w-3xl flex justify-between w-full')
+    section(class='max-w-3xl md:flex justify-between w-full p-4 md:p-0')
       div(class='flex flex-col items-center')
         div
           ul
             each val in ['tailwind', 'webpack', 'react']
               li(class='shadow-lg bg-white rounded-lg mb-4 px-4 py-2 w-36 text-center text-lg')= val
-        div(class='flex items-center my-6')
+        div(class='flex items-center my-6 self-start md:self-auto')
           div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 1 
           | Choose Packages
           
@@ -31,7 +31,7 @@ block content
               span= val
               if val === 'prerelease'
                 div(class='before:content-["▾"] pb-1')
-        div(class='flex items-center my-6')
+        div(class='flex items-center my-6 self-start md:self-auto')
           div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 2 
           | Choose Release Type
 
@@ -50,12 +50,12 @@ block content
               div Vite: 3.2.3 → 4.0.0-alpha.0.
               div React: 17.0.2 → 18.0.0.
 
-        div(class='flex items-center my-6')
+        div(class='flex items-center my-6 self-start md:self-auto')
           div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 3 
           | Receive Updates
 
   div(class="flex justify-center py-6 bg-white w-full")
-    section(class="max-w-3xl w-full text-xl")
+    section(class='max-w-3xl md:w-full md:text-xl p-4 md:p-0')
       p(class='my-4') Get started for #[a(href="/sign_up") free]...
-      p(class='my-4 ml-16') ... or explore our #[a(href="/") business plan]...
-      p(class='my-4 ml-32') ... or #[a(href="/") host your own]!
+      p(class='my-4 md:ml-32') ... or explore our #[a(href="/") business plan]...
+      p(class='my-4 md:ml-96') ... or #[a(href="/") host your own]!
