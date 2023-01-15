@@ -1,4 +1,55 @@
 extends layout.pug
 
 block content
-  | Welcome to the app.
+  div(class='flex items-center flex-col bg-zinc-100 w-full')
+    section(class='max-w-3xl')
+      h2(class='text-fuchsia-600 text-6xl my-12 leading-tight') Stay one step ahead of the JavaScript ecosystem.
+
+      p(class='text-3xl my-12 max-w-md leading-tight') Neith tracks your favorite npm packages and keeps you up to date with the latest releases.
+
+  div(class="flex justify-center py-6 bg-white w-full")
+    section(class="max-w-3xl w-full text-xl")
+      p(class='my-4') A JavaScript project has hundreds of dependencies...
+      p(class='my-4') ... at least, a small one. Yours more likely has thousands.
+      p(class='my-4') Cut through the cruft and stay up to date with the most important packages in your project, and ensure technical debt doesn't hold you back.
+
+  div(class='flex items-center flex-col bg-zinc-100 w-full py-12')
+    section(class='max-w-3xl flex justify-between w-full')
+      div(class='flex flex-col items-center')
+        div
+          ul
+            each val in ['tailwind', 'webpack', 'react']
+              li(class='shadow-lg bg-white rounded-lg mb-4 p-4 w-36 text-center text-lg')= val
+        div(class='flex items-center my-6')
+          div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 1 
+          | Choose Packages
+          
+      div(class='flex flex-col items-center')
+        ul(class='rounded-lg bg-white border border-fuchsia-500 overflow-hidden w-48')
+          each val in ['prerelease', 'minor', 'major']
+            li(class=`h-12 text-lg flex items-center justify-between px-4 ${val === 'major' ? 'bg-zinc-100' : ''}`)
+              span= val
+              if val === 'prerelease'
+                div(class='before:content-["▾"] pb-1')
+        div(class='flex items-center my-6')
+          div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 2 
+          | Choose Release Type
+
+      div(class='flex flex-col items-center')
+        div(class='rounded-lg bg-white border border-fuchsia-500 overflow-hidden w-60 p-2')
+          div(class='flex justify-between items-center')
+            div(class='flex')
+              div Neith
+              div(class='bg-zinc-200 text-zinc-800 rounded px-2 w-12 ml-2') APP
+            div
+              div(class='text-zinc-600 font-light text-xs') Monday 9:00am
+          div(class='flex mt-4')
+            div(class='border border-left border-2 border-blue-400 mr-4 ml-1')
+            div
+              div(class='mb-4') You've got updates!
+              div Vite: 3.2.3 → 4.0.0-alpha.0.
+              div React: 17.0.2 → 18.0.0.
+
+        div(class='flex items-center my-6')
+          div(class="bg-fuchsia-600 rounded-full w-12 h-12 text-white flex items-center justify-center mr-2") 3 
+          | Receive Updates

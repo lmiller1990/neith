@@ -3,5 +3,19 @@
 @tailwind utilities;
 
 button {
-  @apply bg-red-300;
+  @apply h-12;
+}
+
+button.primary {
+  @apply hover:bg-fuchsia-500;
+  @apply text-white p-2 rounded-md w-24 bg-fuchsia-600;
+}
+
+button.secondary {
+  @apply hover:bg-fuchsia-100;
+  @apply bg-white text-fuchsia-600 p-2 rounded-md w-24 border-2 border-fuchsia-600;
+}
+
+button:disabled {
+  @apply opacity-30 cursor-not-allowed;
 }

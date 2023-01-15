@@ -5,11 +5,18 @@ html
     meta(http-equiv="X-UA-Compatible" content="IE=edge")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="../style.css")
-  body
-    if locals.organizationId
-      a(href="/app/") Go to App
-    else 
-      a(href="/sign_in") Sign In
-      a(href="/sign_up") Sign Up
+  body(class='flex flex-col items-center')
+    header(class="flex justify-center py-6 bg-zinc-100 w-full")
+      div(class="max-w-3xl flex justify-between w-full")
+        h1(class="text-fuchsia-600 text-6xl") NEITH
+        div
+          button(class="secondary mx-2") Sign In
+          button(class="primary") Sign Up
+
+      //- if locals.organizationId
+      //-   a(href="/app/") Go to App
+      //- else 
+      //-   a(href="/sign_in") Sign In
+      //-   a(href="/sign_up") Sign Up
 
     block content
