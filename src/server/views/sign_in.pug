@@ -1,14 +1,16 @@
 extends layout.pug
 
 block content
-  form(method="POST" action="/sign_in")
-    label(for="email") Email
-    input#email(name="email" type="email")
+  div(class='w-full p-4 flex justify-center h-full md:pt-32')
+    div(class='w-full md:max-w-md')
+      form(method="POST" action="/sign_in" class="bg-white p-2 md:p-8 border shadow-lg rounded flex flex-col")
+        label(for="email") Email
+        input#email(name="email" type="email")
 
-    label(for="password") Password
-    input#password(name="password" type="password")
+        label(for="password") Password
+        input#password(name="password" type="password")
 
-    button#submit Submit
+        button(id='submit' class="flex items-center justify-center hover:bg-fuchsia-500 mt-2 mb-1 text-white md:p-2 rounded-md h-8 w-full md:w-24 md:h-12 bg-fuchsia-600 self-end") Submit
 
-  if flash
-    include includes/flash.pug
+      if flash
+        include includes/flash.pug

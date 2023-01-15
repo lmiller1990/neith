@@ -1,23 +1,25 @@
 extends layout.pug
 
 block content
-  form(method="POST" action="/sign_up")
-    input#timezone(name="timezone" type="hidden") 
+  div(class='w-full p-4 bg-white flex justify-center h-full md:pt-32')
+    div(class='w-full md:max-w-md')
+      form(method="POST" action="/sign_up" class="bg-white p-2 md:px-8 md:pt-8 md:pb-4 shadow-lg border rounded flex flex-col")
+        input#timezone(name="timezone" type="hidden") 
 
-    label(for="email") Email
-    input#email(name="email" type="email")
+        label(for="email") Email
+        input#email(name="email" type="email")
 
-    label(for="organization") Organization Name
-    input#organization(name="organization")
+        label(for="organization") Organization Name
+        input#organization(name="organization")
 
-    label(for="password") Password
-    input#password(name="password" type="password")
+        label(for="password") Password
+        input#password(name="password" type="password")
 
-    button#submit Sign Up
+        button(id='submit' class="flex items-center justify-center hover:bg-fuchsia-500 mt-2 mb-1 text-white md:p-2 rounded-md h-8 w-full md:w-24 md:h-12 bg-fuchsia-600 self-end") Submit
 
-  if flash
-    include includes/flash.pug
+      if flash
+        include includes/flash.pug
 
-  script.
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    document.querySelector("#timezone").value = timezone
+      script.
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        document.querySelector("#timezone").value = timezone

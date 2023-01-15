@@ -5,3 +5,7 @@
 a {
   @apply border-b-fuchsia-500 border-b-2;
 }
+
+input {
+  @apply border rounded w-full border-black p-1 md:my-2;
+}
