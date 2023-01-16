@@ -1,5 +1,5 @@
 import waitPort from "wait-port";
-import url from "url";
+import url from "node:url";
 import { PORT } from "../../src/shared/constants.js";
 import { execa } from "execa";
 import debugLib from "debug";
@@ -46,7 +46,7 @@ export async function stopServer(): Promise<null> {
     debug(`killing %i with cmd: %o`, check.pids, cmd);
     try {
       await execa(...cmd);
-    } catch (e) {
+    } catch (e: any) {
       debug("error killing server on %i: %s", e.message);
       //
     }
@@ -66,7 +66,7 @@ export async function startServer(): Promise<null> {
   try {
     debug("starting server...");
     execa(`npm`, ["run", "server"]);
-  } catch (e) {
+  } catch (e: any) {
     debug("error starting server %s", e.message);
   }
 

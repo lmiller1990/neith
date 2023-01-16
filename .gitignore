@@ -1,5 +1,6 @@
 node_modules
 dbschema.js
+screenshots
 videos
 db_erd.svg
 src/**/*.js

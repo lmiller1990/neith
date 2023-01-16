@@ -26,10 +26,14 @@ export async function execa(cmd: string, env: Record<string, string> = {}) {
 
 const TEST_DB = "notifier_test";
 
-export async function resetdb() {
-  const name = `${TEST_DB}_${(Math.random() * 10000).toFixed(0)}`;
+export async function resetdb(name?: string) {
+  name ??= `${TEST_DB}_${(Math.random() * 10000).toFixed(0)}`;
   debug(`Creating db: ${name}`);
-  await execa(`createdb ${name}`);
+  try {
+    await execa(`createdb ${name}`);
+  } catch (e: any) {
+    //
+  }
 
   return name;
 }
