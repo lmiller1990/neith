@@ -15,6 +15,7 @@ export type Pkg = Awaited<ReturnType<typeof trpc["getDependencies"]["query"]>>;
 const { loading, disableWhileRunning } = useDisableWhileExecuting();
 
 const pkgName = ref("");
+const error = ref<string>();
 const pkg = ref<Pkg>();
 const frequency = ref<typeof notifyWhen[number]>("major");
 
@@ -22,7 +23,12 @@ const modal = useModal();
 
 async function fetchPackageData(search: string) {
   disableWhileRunning(async () => {
-    pkg.value = await trpc.getDependencies.query(search.toLowerCase());
+    try {
+      pkg.value = await trpc.getDependencies.query(search.toLowerCase());
+      error.value = undefined;
+    } catch (e) {
+      error.value = `Error occurred: no package named ${search} was found.`;
+    }
   });
 }
 
@@ -44,7 +50,10 @@ const savePackageMutation = useMutation({
 </script>
 
 <template>
-  <form @submit.prevent="savePackageMutation.mutate()" class="flex flex-col">
+  <form
+    @submit.prevent="savePackageMutation.mutate()"
+    class="flex flex-col w-full md:w-[600px]"
+  >
     <Input
       name="pkgName"
       v-model="pkgName"
@@ -73,11 +82,7 @@ const savePackageMutation = useMutation({
     <div class="flex justify-end">
       <Button :disabled="loading || !pkgName || !pkg">Submit</Button>
     </div>
+
+    <div role="error" class="text-red-600 py-2" v-if="error">{{ error }}</div>
   </form>
 </template>
-
-<style scoped>
-form {
-  width: 600px;
-}
-</style>

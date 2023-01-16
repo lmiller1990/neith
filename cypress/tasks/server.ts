@@ -6,7 +6,7 @@ import debugLib from "debug";
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
-const debug = debugLib("notifier:cypress:task:server");
+const debug = debugLib("neith:cypress:task:server");
 
 /**
  * See if the server is open by checking processes listening on port 4444.

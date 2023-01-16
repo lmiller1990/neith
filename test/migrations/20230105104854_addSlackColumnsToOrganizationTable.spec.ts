@@ -2,7 +2,7 @@ import { expect } from "vitest";
 import { createOrganization } from "../fixtures/organization";
 import { testMigration } from "./utils";
 
-testMigration("20221220105733_addOrganizationTable", (verify) => {
+testMigration("20230105104854_addSlackColumnsToOrganizationTable", (verify) => {
   verify.up(async (client) => {
     await createOrganization(client);
     await client("organizations").where({ id: 1 }).update({

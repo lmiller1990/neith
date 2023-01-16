@@ -4,7 +4,7 @@ import { Emails, Jobs, Organizations, schedule } from "../../../dbschema.js";
 import debugLib from "debug";
 import { notify, NotifyPayload } from "../../notify.js";
 
-const debug = debugLib("server:models:organization");
+const debug = debugLib("neith:server:models:organization");
 
 interface NotificationSettings {
   frequency: schedule;

@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import debugLib from "debug";
 
-const debug = debugLib("server:services:mailer");
+const debug = debugLib("neith:server:services:mailer");
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,

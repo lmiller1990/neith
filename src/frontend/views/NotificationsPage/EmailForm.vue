@@ -28,7 +28,10 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <form @submit.prevent="handleSubmit" class="flex flex-col">
+  <form
+    @submit.prevent="handleSubmit"
+    class="flex flex-col w-full md:w-[600px]"
+  >
     <Input
       name="email"
       type="email"
@@ -42,9 +45,3 @@ async function handleSubmit() {
     </div>
   </form>
 </template>
-
-<style scoped>
-form {
-  width: 600px;
-}
-</style>

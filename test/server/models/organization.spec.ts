@@ -9,14 +9,15 @@ import { createJob } from "../../fixtures/job.js";
 import { createOrganization } from "../../fixtures/organization.js";
 
 describe("Organization", () => {
+  let dbname: string;
   beforeEach(async () => {
-    await resetdb();
-    await runAllMigrations();
+    dbname = await resetdb();
+    await runAllMigrations(dbname);
   });
 
   describe("getAllWithJobs", () => {
     it("returns all orgs with associated jobs", async () => {
-      const db = createKnex();
+      const db = createKnex(dbname);
       await createOrganization(db);
       await createJob(db, { organization_id: 1 });
 

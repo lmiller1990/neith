@@ -22,12 +22,15 @@ const orgQuery = useQuery({
       </p>
       <p class="my-2">Plan Type: (TODO!!)</p>
       <form action="/sign_out" method="POST">
-        <button class="underline">Sign Out</button>
+        <button class="border rounded p-1 text-fuchsia-600 border-fuchsia-600">
+          Sign Out
+        </button>
       </form>
     </Card>
   </div>
-  <div class="flex">
-    <Card class="flex-1 w-1/2 mr-2 mb-4 p-6">
+
+  <div class="flex flex-col md:flex-row">
+    <Card class="flex-1 w-full md:w-1/2 mr-2 mb-4 p-6">
       <h1 class="text-center my-2">Free</h1>
       <h2 class="text-center my-8 text-2xl font-semibold text-gray-400">
         US$0/year
@@ -41,7 +44,8 @@ const orgQuery = useQuery({
         <Button disabled>Your Plan</Button>
       </div>
     </Card>
-    <Card class="flex-1 w-1/2 ml-2 mb-4 p-6">
+
+    <Card class="flex-1 w-full md:w-1/2 mb-4 p-6">
       <h1 class="text-center my-2">Business</h1>
       <h2 class="text-center my-8 text-2xl font-semibold text-gray-400">
         US$19/year

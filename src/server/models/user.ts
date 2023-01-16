@@ -3,7 +3,7 @@ import { Knex } from "knex";
 import debugLib from "debug";
 import { InvalidCredentialsError, OrganizationExistsError } from "../errors.js";
 
-const debug = debugLib("notifier:server:models:user");
+const debug = debugLib("neith:server:models:user");
 
 export const User = {
   createSecurePassword(plaintext: string) {

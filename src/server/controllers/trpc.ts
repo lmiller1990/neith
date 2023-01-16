@@ -9,7 +9,7 @@ import { Package } from "../models/package.js";
 import { Registry } from "../models/registry.js";
 import { rescheduleJob } from "../services/jobs.js";
 
-const debug = debugLib("server:controllers:trpc");
+const debug = debugLib("neith:server:controllers:trpc");
 
 export const createContext = ({ req, res }: CreateExpressContextOptions) => ({
   req,

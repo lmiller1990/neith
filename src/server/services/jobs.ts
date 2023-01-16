@@ -1,15 +1,15 @@
 import { DateTime } from "luxon";
 import { Jobs, Organizations, schedule } from "../../../dbschema.js";
-import { NotifyModule, NotifyPayload } from "../../notify.js";
+import type { NotifyModule, NotifyPayload } from "../../notify.js";
 import debugLib from "debug";
 import { Mailer } from "./mailer.js";
 import { Package } from "../models/package.js";
-import { Knex } from "knex";
+import type { Knex } from "knex";
 import { Organization } from "../models/organization.js";
 import { Registry } from "../models/registry.js";
 import { toHuman } from "../utils.js";
 
-const debug = debugLib("server:services:jobs");
+const debug = debugLib("neith:server:services:jobs");
 
 const DESIGNATED_HOUR = 9;
 

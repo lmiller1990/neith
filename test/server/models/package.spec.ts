@@ -8,13 +8,14 @@ import { Package } from "../../../src/server/models/package.js";
 import { createOrganization } from "../../fixtures/organization.js";
 
 describe("saveModuleForOrganization", () => {
+  let dbname: string;
   beforeEach(async () => {
-    await resetdb();
-    await runAllMigrations();
+    dbname = await resetdb();
+    await runAllMigrations(dbname);
   });
 
   it("saves a new package", async () => {
-    const client = createKnex();
+    const client = createKnex(dbname);
     const [{ id }] = await createOrganization(client).returning(["id"]);
 
     await Package.saveModuleForOrganization(client, {

@@ -2,7 +2,7 @@ import { Knex } from "knex";
 import { Modules, notify_when } from "../../../dbschema.js";
 import debugLib from "debug";
 
-const debug = debugLib("server:models:package");
+const debug = debugLib("neith:server:models:package");
 
 export const Package = {
   async getModulesForOrganization(

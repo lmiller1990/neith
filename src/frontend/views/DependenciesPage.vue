@@ -31,7 +31,9 @@ const modal = useModal();
 <template>
   <div>
     <div class="flex justify-end mb-2">
-      <Button @click="modal.showModal('dependenciesForm')">Add</Button>
+      <Button @click="modal.showModal('dependenciesForm')" class="w-[150px]"
+        >Add Dependency</Button
+      >
     </div>
     <template v-if="depsQuery.data.value?.length">
       <div

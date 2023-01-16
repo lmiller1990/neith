@@ -3,7 +3,7 @@ import { User } from "../models/user.js";
 import debugLib from "debug";
 import { Session } from "../models/session.js";
 
-const debug = debugLib("notifier:server:controllers:auth");
+const debug = debugLib("neith:server:controllers:auth");
 
 export const auth = Router();
 

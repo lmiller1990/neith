@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from "vue";
 import { useRoute } from "vue-router";
 import SideMenu, { MenuLink } from "./components/SideMenu.vue";
 import { useModal } from "./composables/modal.js";
@@ -35,7 +34,7 @@ const route = useRoute();
   <div
     v-show="modal.show.value"
     id="modal"
-    class="absolute w-screen h-screen z-10 flex justify-center flex-col items-center bg-gray-400/50"
+    class="fixed w-screen h-screen z-10 flex justify-center flex-col items-center bg-gray-400/50"
     @click="handleHideModal"
   >
     <component
@@ -44,13 +43,15 @@ const route = useRoute();
     />
   </div>
 
-  <div class="flex items-center flex-col">
-    <h1 class="uppercase my-8 text-5xl text-fuchsia-600">Neith</h1>
-    <div class="flex justify-center">
-      <div class="w-52 mr-4">
+  <div class="flex items-center flex-col p-4 md:p-0">
+    <h1 class="uppercase mb-6 mt-2 md:my-8 text-5xl text-fuchsia-600">
+      <RouterLink to="/">Neith</RouterLink>
+    </h1>
+    <div class="md:flex justify-center w-full">
+      <div class="w-full md:w-52 md:mr-4">
         <SideMenu :items="items" :selected="route.name?.toString()" />
       </div>
-      <div class="w-[32rem]">
+      <div class="md:w-[32rem]">
         <RouterView />
       </div>
     </div>

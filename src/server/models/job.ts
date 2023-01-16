@@ -3,7 +3,7 @@ import { schedule } from "../../../dbschema.js";
 import debugLib from "debug";
 import { Organization } from "./organization.js";
 
-const debug = debugLib("server:models:job");
+const debug = debugLib("neith:server:models:job");
 
 export const Job = {
   async updateJobScheduleForOrganization(

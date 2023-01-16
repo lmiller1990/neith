@@ -18,7 +18,7 @@ import { createContext, trpc } from "./controllers/trpc.js";
 import { startScheduler } from "./services/jobs.js";
 import debugLib from "debug";
 
-const debug = debugLib("server:express");
+const debug = debugLib("neith:server:express");
 
 declare global {
   namespace Express {
@@ -34,7 +34,7 @@ declare global {
 
 export const knexClient = knex(knexConfig);
 
-startScheduler(knexClient);
+// startScheduler(knexClient);
 
 const app = express();
 
