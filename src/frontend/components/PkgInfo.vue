@@ -22,7 +22,7 @@ function format(str: string) {
       </div>
     </div>
     <p class="text-md">{{ pkg.description }}</p>
-    <h3 class="my-1">Tags</h3>
+    <h3 class="my-1 text-lg">Tags</h3>
     <ul class="text-sm">
       <li v-for="tag of pkg.tags" :key="tag.name">
         {{ tag.name }} • {{ tag.tag }} • {{ format(tag.published) }}

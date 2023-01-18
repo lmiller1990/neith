@@ -37,7 +37,8 @@ export const Registry = {
         published: result.time[tag],
       }))
       .map((x) => x)
-      .sort((x, y) => (isoToUtc(x.published) < isoToUtc(y.published) ? 1 : -1));
+      .sort((x, y) => (isoToUtc(x.published) < isoToUtc(y.published) ? 1 : -1))
+      .slice(0, 10);
 
     return {
       name: result.name,

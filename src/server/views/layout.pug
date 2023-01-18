@@ -11,8 +11,11 @@ html
         h1(class="text-fuchsia-600 text-3xl md:text-5xl") 
           a(href="/" class="border-0") NEITH
         div(class="flex items-center")
-          a(href="/sign_in" class="flex items-center justify-center md:bg-white text-fuchsia-600 md:p-2 md:rounded-md h-8 w-16 md:w-24 md:h-12 md:border-2 md:border-fuchsia-600 mx-2 hover:bg-fuchsia-100 border-0") Sign In
-          a(href="/sign_up" class="flex items-center justify-center hover:bg-fuchsia-500 text-white md:p-2 rounded-md h-8 w-16 md:w-24 md:h-12 bg-fuchsia-600") Sign Up
+          if locals.organizationId
+            a(href="/app" class="flex items-center justify-center hover:bg-fuchsia-500 text-white md:p-2 rounded-md h-8 w-16 md:w-24 md:h-12 bg-fuchsia-600") Go to App
+          else
+            a(href="/sign_in" class="flex items-center justify-center md:bg-white text-fuchsia-600 md:p-2 md:rounded-md h-8 w-16 md:w-24 md:h-12 md:border-2 md:border-fuchsia-600 mx-2 hover:bg-fuchsia-100 border-0") Sign In
+            a(href="/sign_up" class="flex items-center justify-center hover:bg-fuchsia-500 text-white md:p-2 rounded-md h-8 w-16 md:w-24 md:h-12 bg-fuchsia-600") Sign Up
   
       //- if locals.organizationId
       //-   a(href="/app/") Go to App

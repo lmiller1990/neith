@@ -11,6 +11,7 @@ import bodyParser from "body-parser";
 import knexConfig from "../../knexfile.js";
 import { sessionMiddleware } from "./session.js";
 import { contextMiddleware } from "./context.js";
+import { slack } from "./controllers/slack.js";
 import { html } from "./controllers/html.js";
 import { auth } from "./controllers/auth.js";
 import { requiresAuth } from "./middleware/requiresAuth.js";
@@ -34,7 +35,7 @@ declare global {
 
 export const knexClient = knex(knexConfig);
 
-startScheduler(knexClient);
+// startScheduler(knexClient);
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(html);
+app.use(slack);
 app.use(auth);
 
 if (process.env.NODE_ENV === "production") {

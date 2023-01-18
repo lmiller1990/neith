@@ -20,7 +20,7 @@ const orgQuery = useQuery({
       <p class="my-2">
         Account Email: {{ orgQuery.data.value?.organization_email }}
       </p>
-      <p class="my-2">Plan Type: (TODO!!)</p>
+      <!-- <p class="my-2">Plan Type: (TODO!!)</p> -->
       <form action="/sign_out" method="POST">
         <button class="border rounded p-1 text-fuchsia-600 border-fuchsia-600">
           Sign Out
@@ -29,7 +29,7 @@ const orgQuery = useQuery({
     </Card>
   </div>
 
-  <div class="flex flex-col md:flex-row">
+  <!-- <div class="flex flex-col md:flex-row">
     <Card class="flex-1 w-full md:w-1/2 mr-2 mb-4 p-6">
       <h1 class="text-center my-2">Free</h1>
       <h2 class="text-center my-8 text-2xl font-semibold text-gray-400">
@@ -60,7 +60,7 @@ const orgQuery = useQuery({
         <Button>Get</Button>
       </form>
     </Card>
-  </div>
+  </div> -->
 </template>
 
 <style scoped>
