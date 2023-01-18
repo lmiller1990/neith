@@ -8,6 +8,6 @@ const debug = debugLib("neith:server:controllers:auth");
 export const slack = Router();
 
 slack.get("/slack", requiresAuth, (_req, res) => {
-  debug('callback from slack authentication:', _req.body, _req.params)
+  debug('callback from slack authentication. body %o params %s url %s', _req.body, _req.params, _req.url)
   res.redirect('/app/notifications')
 });
